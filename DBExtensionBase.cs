@@ -16,11 +16,11 @@ namespace ModuDevCore.ElysiumDB.Extension
     	public string extensionGroup = "";
     	[HideInInspector]
     	public int extensionId = -1;
+    	public string extensionName => this.GetType().Name;
 
     	// INTERNAL
 	    public void Process(ExtensionEvent ev, ElysiumDatabase еlysium = null)
 	    {
-	    	string extensionName = this.GetType().Name;
 	        switch (ev)
 	        {
 	            case ExtensionEvent.Initialize:
@@ -56,5 +56,9 @@ namespace ModuDevCore.ElysiumDB.Extension
 
         protected virtual void OnInitialize(ElysiumDatabase elysium) {}
         protected virtual void OnDispose() {}
+		public void Log(object message)
+	    {
+	        Debug.Log($"[{extensionName}] " + message);
+	    }
     }
 }
