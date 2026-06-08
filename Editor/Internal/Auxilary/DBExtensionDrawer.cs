@@ -751,15 +751,8 @@ namespace ModuDevCore.ElysiumDB.Editor.Internal
                         false,
                         () =>
                         {
-                            int index = property.arraySize;
 
-                            property.InsertArrayElementAtIndex(index);
-
-                            SerializedProperty element =
-                                property.GetArrayElementAtIndex(index);
-
-                            element.boxedValue =
-                                Activator.CreateInstance(type);
+                            ElysiumDatabase.AddExtension(type);
 
                             property.serializedObject.ApplyModifiedProperties();
                             DBPostprocessor.SafetyFixExtensions();

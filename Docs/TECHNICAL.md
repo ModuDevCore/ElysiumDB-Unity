@@ -1,11 +1,13 @@
 <a id="ModuDevCore.ElysiumDB.ElysiumDatabase"></a>
+
 ## ModuDevCore.ElysiumDB.ElysiumDatabase
 
 ### Opportunities
 
-* Database connection management
-* Extension system support
-* SQLite initialization and lifecycle management
+* Modular extension-driven database lifecycle system
+* Centralized SQLite connection management for Unity runtime
+* Hot-pluggable extension pipeline with ordered execution
+* Cross-platform persistent data path abstraction
 
 ---
 
@@ -15,9 +17,7 @@
 public class ElysiumDatabase : IDisposable
 ```
 
----
-
-Provides the central database manager for ElysiumDB. Handles database connections, extension registration, initialization, disposal, file deployment, and access to project settings.
+Provides a centralized database runtime manager for Unity, handling SQLite connections, extension lifecycle execution, platform-aware file handling, and editor integration for configuration and settings management.
 
 ---
 
@@ -40,7 +40,7 @@ public static ElysiumDatabase Instance;
 ```
 
 </td>
-<td>Global active database instance.</td>
+<td>Global singleton instance of the database runtime context.</td>
 </tr>
 
 <tr>
@@ -53,8 +53,9 @@ public Dictionary<string, DBMeta> Connections = new Dictionary<string, DBMeta>()
 ```
 
 </td>
-<td>Collection of active database connections indexed by database path.</td>
+<td>Active database connections indexed by database path key.</td>
 </tr>
+
 </table>
 
 ---
@@ -78,7 +79,7 @@ public static ElysiumDBSettings Settings { get; }
 ```
 
 </td>
-<td>Returns the ElysiumDB settings asset loaded from Resources.</td>
+<td>Loads global ElysiumDB configuration from Unity Resources.</td>
 </tr>
 
 <tr>
@@ -91,7 +92,7 @@ public static bool IsOffline { get; }
 ```
 
 </td>
-<td>Indicates whether the application currently has internet connectivity.</td>
+<td>Indicates whether the application is currently offline (no network reachability).</td>
 </tr>
 
 <tr>
@@ -104,8 +105,9 @@ public static string PlatformDataPath { get; }
 ```
 
 </td>
-<td>Returns the platform-specific writable data directory.</td>
+<td>Platform-specific persistent storage path (Android vs other platforms).</td>
 </tr>
+
 </table>
 
 ---
@@ -120,97 +122,6 @@ public static string PlatformDataPath { get; }
 </tr>
 
 <tr>
-<a id="ModuDevCore.ElysiumDB.ElysiumDatabase.GetExtension"></a>
-<td><code>GetExtension</code></td>
-<td>
-
-```csharp
-public T GetExtension<T>() where T : class
-```
-
-</td>
-<td>Returns the first registered extension of the specified type.</td>
-</tr>
-
-<tr>
-<a id="ModuDevCore.ElysiumDB.ElysiumDatabase.GetExtensions"></a>
-<td><code>GetExtensions</code></td>
-<td>
-
-```csharp
-public T[] GetExtensions<T>() where T : class
-```
-
-</td>
-<td>Returns all registered extensions of the specified type.</td>
-</tr>
-
-<tr>
-<a id="ModuDevCore.ElysiumDB.ElysiumDatabase.HasExtension"></a>
-<td><code>HasExtension</code></td>
-<td>
-
-```csharp
-public bool HasExtension<T>() where T : class
-```
-
-</td>
-<td>Determines whether an extension of the specified type exists.</td>
-</tr>
-
-<tr>
-<a id="ModuDevCore.ElysiumDB.ElysiumDatabase.TryGetExtension"></a>
-<td><code>TryGetExtension</code></td>
-<td>
-
-```csharp
-public bool TryGetExtension<T>(out T extension) where T : class
-```
-
-</td>
-<td>Attempts to retrieve an extension of the specified type.</td>
-</tr>
-
-<tr>
-<a id="ModuDevCore.ElysiumDB.ElysiumDatabase.AddExtension"></a>
-<td><code>AddExtension</code></td>
-<td>
-
-```csharp
-public T AddExtension<T>() where T : DBExtensionBase, new()
-```
-
-</td>
-<td>Creates, initializes, and registers a new extension if one does not already exist.</td>
-</tr>
-
-<tr>
-<a id="ModuDevCore.ElysiumDB.ElysiumDatabase.GetRequiresExtensions"></a>
-<td><code>GetRequiresExtensions</code></td>
-<td>
-
-```csharp
-public static List<Type> GetRequiresExtensions(Type extensionType)
-```
-
-</td>
-<td>Returns all extensions that declare a dependency on the specified extension type.</td>
-</tr>
-
-<tr>
-<a id="ModuDevCore.ElysiumDB.ElysiumDatabase.ProcessRequiredExtensions"></a>
-<td><code>ProcessRequiredExtensions</code></td>
-<td>
-
-```csharp
-public static void ProcessRequiredExtensions()
-```
-
-</td>
-<td>Validates and automatically creates required extensions based on dependency attributes.</td>
-</tr>
-
-<tr>
 <a id="ModuDevCore.ElysiumDB.ElysiumDatabase.New"></a>
 <td><code>New</code></td>
 <td>
@@ -220,7 +131,7 @@ public void New()
 ```
 
 </td>
-<td>Initializes the database system, loads extensions, and connects configured databases.</td>
+<td>Initializes the database runtime, clears existing connections, runs extension initialization, and connects all configured databases.</td>
 </tr>
 
 <tr>
@@ -233,7 +144,7 @@ public void DetachDB(string path)
 ```
 
 </td>
-<td>Disconnects and removes a database connection.</td>
+<td>Disposes and removes a database connection by path key.</td>
 </tr>
 
 <tr>
@@ -246,20 +157,7 @@ public void ConnectDB(string path)
 ```
 
 </td>
-<td>Copies and opens a database file, then registers the connection.</td>
-</tr>
-
-<tr>
-<a id="ModuDevCore.ElysiumDB.ElysiumDatabase.OpenSettings"></a>
-<td><code>OpenSettings</code></td>
-<td>
-
-```csharp
-public static void OpenSettings()
-```
-
-</td>
-<td>Opens the ElysiumDB settings asset in the Unity Editor.</td>
+<td>Creates or loads a SQLite database connection from StreamingAssets into persistent storage and opens it.</td>
 </tr>
 
 <tr>
@@ -272,46 +170,228 @@ public void Dispose()
 ```
 
 </td>
-<td>Releases all database connections and disposes registered extensions.</td>
+<td>Disposes all active database connections, runs extension cleanup, and clears singleton instance.</td>
 </tr>
 
 <tr>
-<a id="ModuDevCore.ElysiumDB.ElysiumDatabase.LoadFileBytes"></a>
-<td><code>LoadFileBytes</code></td>
+<a id="ModuDevCore.ElysiumDB.ElysiumDatabase.OpenSettings"></a>
+<td><code>OpenSettings</code></td>
 <td>
 
 ```csharp
-private static byte[] LoadFileBytes(string path)
+public static void OpenSettings()
 ```
 
 </td>
-<td>Loads a file as a byte array from disk or Android streaming assets.</td>
+<td>Opens the ElysiumDB settings asset in Unity editor property window.</td>
 </tr>
 
 <tr>
-<a id="ModuDevCore.ElysiumDB.ElysiumDatabase.EnsureFileExists"></a>
-<td><code>EnsureFileExists</code></td>
+<a id="ModuDevCore.ElysiumDB.ElysiumDatabase.RunExtensionsProcess"></a>
+<td><code>RunExtensionsProcess</code></td>
 <td>
 
 ```csharp
-private static void EnsureFileExists(string path, byte[] bytes)
+void RunExtensionsProcess(ExtensionEvent processEvent)
 ```
 
 </td>
-<td>Creates a file if it does not already exist.</td>
+<td>Executes all registered extensions in ordered sequence based on initialization or disposal event lifecycle rules.</td>
 </tr>
 
 <tr>
-<a id="ModuDevCore.ElysiumDB.ElysiumDatabase.~ElysiumDatabase"></a>
-<td><code>~ElysiumDatabase</code></td>
+<a id="ModuDevCore.ElysiumDB.ElysiumDatabase.SafeProcess"></a>
+<td><code>SafeProcess</code></td>
 <td>
 
 ```csharp
-~ElysiumDatabase()
+private void SafeProcess(DBExtensionBase extension, ExtensionEvent evt)
 ```
 
 </td>
-<td>Finalizer that ensures cleanup of database resources.</td>
+<td>Safely executes extension lifecycle method with exception handling and error logging.</td>
+</tr>
+
+<tr>
+<a id="ModuDevCore.ElysiumDB.ElysiumDatabase.GetExtension"></a>
+<td><code>GetExtension</code></td>
+<td>
+
+```csharp
+public static T GetExtension<T>() where T : class
+```
+
+</td>
+<td>Returns the first matching extension of the specified type.</td>
+</tr>
+
+<tr>
+<a id="ModuDevCore.ElysiumDB.ElysiumDatabase.GetExtensions"></a>
+<td><code>GetExtensions</code></td>
+<td>
+
+```csharp
+public static T[] GetExtensions<T>() where T : class
+```
+
+</td>
+<td>Returns all extensions matching the specified type.</td>
+</tr>
+
+<tr>
+<a id="ModuDevCore.ElysiumDB.ElysiumDatabase.HasExtension"></a>
+<td><code>HasExtension</code></td>
+<td>
+
+```csharp
+public static bool HasExtension<T>() where T : class
+```
+
+</td>
+<td>Checks whether at least one extension of the specified type exists.</td>
+</tr>
+
+<tr>
+<a id="ModuDevCore.ElysiumDB.ElysiumDatabase.TryGetExtension"></a>
+<td><code>TryGetExtension</code></td>
+<td>
+
+```csharp
+public static bool TryGetExtension<T>(out T extension) where T : class
+```
+
+</td>
+<td>Attempts to retrieve an extension of the specified type.</td>
+</tr>
+
+<tr>
+<a id="ModuDevCore.ElysiumDB.ElysiumDatabase.AddExtension"></a>
+<td><code>AddExtension</code></td>
+<td>
+
+```csharp
+public static T AddExtension<T>() where T : DBExtensionBase, new()
+```
+
+</td>
+<td>Creates and registers a new extension instance and initializes it if runtime instance exists.</td>
+</tr>
+
+<tr>
+<a id="ModuDevCore.ElysiumDB.ElysiumDatabase.RemoveExtension"></a>
+<td><code>RemoveExtension</code></td>
+<td>
+
+```csharp
+public static bool RemoveExtension<T>() where T : DBExtensionBase
+```
+
+</td>
+<td>Removes and disposes an extension of the specified type.</td>
+</tr>
+
+<tr>
+<a id="ModuDevCore.ElysiumDB.ElysiumDatabase.GetExtension_Type"></a>
+<td><code>GetExtension(Type)</code></td>
+<td>
+
+```csharp
+public static object GetExtension(Type type)
+```
+
+</td>
+<td>Returns the first extension matching the specified runtime type.</td>
+</tr>
+
+<tr>
+<a id="ModuDevCore.ElysiumDB.ElysiumDatabase.GetExtensions_Type"></a>
+<td><code>GetExtensions(Type)</code></td>
+<td>
+
+```csharp
+public static object[] GetExtensions(Type type)
+```
+
+</td>
+<td>Returns all extensions assignable from the specified runtime type.</td>
+</tr>
+
+<tr>
+<a id="ModuDevCore.ElysiumDB.ElysiumDatabase.HasExtension_Type"></a>
+<td><code>HasExtension(Type)</code></td>
+<td>
+
+```csharp
+public static bool HasExtension(Type type)
+```
+
+</td>
+<td>Checks if any extension of the given runtime type exists.</td>
+</tr>
+
+<tr>
+<a id="ModuDevCore.ElysiumDB.ElysiumDatabase.TryGetExtension_Type"></a>
+<td><code>TryGetExtension(Type)</code></td>
+<td>
+
+```csharp
+public static bool TryGetExtension(Type type, out object extension)
+```
+
+</td>
+<td>Attempts to retrieve an extension by runtime type.</td>
+</tr>
+
+<tr>
+<a id="ModuDevCore.ElysiumDB.ElysiumDatabase.AddExtension_Type"></a>
+<td><code>AddExtension(Type)</code></td>
+<td>
+
+```csharp
+public static object AddExtension(Type type)
+```
+
+</td>
+<td>Creates and registers a new extension instance via reflection and initializes it.</td>
+</tr>
+
+<tr>
+<a id="ModuDevCore.ElysiumDB.ElysiumDatabase.RemoveExtension_Type"></a>
+<td><code>RemoveExtension(Type)</code></td>
+<td>
+
+```csharp
+public static bool RemoveExtension(Type type)
+```
+
+</td>
+<td>Removes and disposes an extension by runtime type.</td>
+</tr>
+
+<tr>
+<a id="ModuDevCore.ElysiumDB.ElysiumDatabase.GetRequiresExtensions"></a>
+<td><code>GetRequiresExtensions</code></td>
+<td>
+
+```csharp
+public static List<Type> GetRequiresExtensions(Type extensionType)
+```
+
+</td>
+<td>Returns a list of extension types that depend on the specified extension type via attributes.</td>
+</tr>
+
+<tr>
+<a id="ModuDevCore.ElysiumDB.ElysiumDatabase.ProcessRequiredExtensions"></a>
+<td><code>ProcessRequiredExtensions</code></td>
+<td>
+
+```csharp
+public static void ProcessRequiredExtensions()
+```
+
+</td>
+<td>Validates and auto-creates required extensions based on dependency attributes.</td>
 </tr>
 
 </table>
@@ -320,13 +400,33 @@ private static void EnsureFileExists(string path, byte[] bytes)
 
 ## Enum
 
-None
+<table>
+<tr>
+<th>Enum</th>
+<th>Values</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<td colspan="3">None</td>
+</tr>
+</table>
 
 ---
 
 ## Nested Classes
 
-None
+<table>
+<tr>
+<th>Class</th>
+<th>Declaration</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<td colspan="3">None</td>
+</tr>
+</table>
 
 ---
 
@@ -749,6 +849,112 @@ None
 ## Nested Classes
 
 None
+
+---
+
+<a id="ModuDevCore.ElysiumDB.DefaultExtensionGroupAttribute"></a>
+
+## ModuDevCore.ElysiumDB.DefaultExtensionGroupAttribute
+
+### Opportunities
+
+* Declarative default grouping for database extensions
+* Metadata-driven extension organization
+* Reduces boilerplate group assignment in runtime logic
+
+---
+
+### Class
+
+```csharp id="6v8m3q"
+[AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
+public sealed class DefaultExtensionGroupAttribute : Attribute
+```
+
+Attribute used to define a default extension group for `DBExtensionBase` implementations.
+It allows extensions to be automatically assigned to a logical group during registration.
+
+---
+
+## Fields
+
+<table>
+<tr>
+<th>Field</th>
+<th>Declaration</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<a id="ModuDevCore.ElysiumDB.DefaultExtensionGroupAttribute.ExtensionGroup"></a>
+<td><code>ExtensionGroup</code></td>
+<td>
+
+```csharp id="c9q7kp"
+public string ExtensionGroup;
+```
+
+</td>
+<td>Name of the default extension group applied to the target extension class.</td>
+</tr>
+
+</table>
+
+---
+
+## Properties
+
+<table>
+<tr>
+<td colspan="3">None</td>
+</tr>
+</table>
+
+---
+
+## Methods
+
+<table>
+<tr>
+<th>Method</th>
+<th>Declaration</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<a id="ModuDevCore.ElysiumDB.DefaultExtensionGroupAttribute.ctor"></a>
+<td><code>Constructor</code></td>
+<td>
+
+```csharp id="m2t7wq"
+public DefaultExtensionGroupAttribute(string extensionGroup)
+```
+
+</td>
+<td>Initializes the attribute with the specified extension group name.</td>
+</tr>
+
+</table>
+
+---
+
+## Enum
+
+<table>
+<tr>
+<td colspan="3">None</td>
+</tr>
+</table>
+
+---
+
+## Nested Classes
+
+<table>
+<tr>
+<td colspan="3">None</td>
+</tr>
+</table>
 
 ---
 
@@ -3600,15 +3806,18 @@ public enum ExtensionEvent
 </tr>
 </table>
 
+---
+
 <a id="ModuDevCore.ElysiumDB.Extension.DBExtensionBase"></a>
+
 ## ModuDevCore.ElysiumDB.Extension.DBExtensionBase
 
 ### Opportunities
 
-* Provide a base lifecycle system for database extensions
-* Standardize initialization and disposal hooks for modular features
-* Enable global access to extensions through `ElysiumDatabase`
-* Simplify extension retrieval and management via static helpers
+* Base lifecycle class for modular ElysiumDB extensions
+* Unified initialization/disposal pipeline for database features
+* Extension-to-extension dependency access layer
+* Lightweight debugging and logging abstraction per extension
 
 ---
 
@@ -3619,11 +3828,11 @@ public enum ExtensionEvent
 public abstract class DBExtensionBase
 ```
 
-Base class for all Elysium database extensions. Implements a lifecycle system using `ExtensionEvent`, provides initialization/disposal hooks, and exposes static helpers for interacting with the central `ElysiumDatabase` instance.
+Core abstract base class for all ElysiumDB extensions. Provides lifecycle hooks (`Initialize`, `Dispose`), global extension access helpers, and standardized processing through the `ElysiumDatabase` runtime system.
 
-<details>
+---
 
-### Fields
+## Fields
 
 <table>
 <tr>
@@ -3638,11 +3847,11 @@ Base class for all Elysium database extensions. Implements a lifecycle system us
 <td>
 
 ```csharp
-public bool enabled;
+public bool enabled = true;
 ```
 
 </td>
-<td>Determines whether the extension is active and should process events.</td>
+<td>Controls whether the extension participates in the initialization lifecycle.</td>
 </tr>
 
 <tr>
@@ -3651,11 +3860,11 @@ public bool enabled;
 <td>
 
 ```csharp
-public string extensionGroup;
+public string extensionGroup = "";
 ```
 
 </td>
-<td>Logical grouping identifier for organizing extensions.</td>
+<td>Logical grouping identifier used for ordering and organization of extensions.</td>
 </tr>
 
 <tr>
@@ -3664,20 +3873,44 @@ public string extensionGroup;
 <td>
 
 ```csharp
-public int extensionId;
+public int extensionId = -1;
 ```
 
 </td>
-<td>Unique identifier for the extension instance inside the database.</td>
+<td>Numeric identifier for extension instance tracking or internal grouping.</td>
 </tr>
 
 </table>
 
-### Properties
+---
 
-None
+## Properties
 
-### Methods
+<table>
+<tr>
+<th>Property</th>
+<th>Declaration</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<a id="ModuDevCore.ElysiumDB.Extension.DBExtensionBase.extensionName"></a>
+<td><code>extensionName</code></td>
+<td>
+
+```csharp
+public string extensionName { get; }
+```
+
+</td>
+<td>Returns the runtime type name of the extension.</td>
+</tr>
+
+</table>
+
+---
+
+## Methods
 
 <table>
 <tr>
@@ -3692,11 +3925,11 @@ None
 <td>
 
 ```csharp
-public void Process(ExtensionEvent ev, ElysiumDatabase еlysium = null)
+public void Process(ExtensionEvent ev, ElysiumDatabase elysium = null)
 ```
 
 </td>
-<td>Handles extension lifecycle events (Initialize / Dispose) and forwards them to virtual callbacks.</td>
+<td>Executes extension lifecycle events (Initialize / Dispose) and routes them to virtual hooks.</td>
 </tr>
 
 <tr>
@@ -3705,11 +3938,11 @@ public void Process(ExtensionEvent ev, ElysiumDatabase еlysium = null)
 <td>
 
 ```csharp
-public static T GetExtension<T>() where T : class
+public T GetExtension<T>() where T : class
 ```
 
 </td>
-<td>Returns a single extension instance of type T from the database.</td>
+<td>Retrieves the first matching extension from the global ElysiumDatabase context.</td>
 </tr>
 
 <tr>
@@ -3718,11 +3951,11 @@ public static T GetExtension<T>() where T : class
 <td>
 
 ```csharp
-public static T[] GetExtensions<T>() where T : class
+public T[] GetExtensions<T>() where T : class
 ```
 
 </td>
-<td>Returns all extension instances of type T.</td>
+<td>Retrieves all extensions matching the specified type from the global database context.</td>
 </tr>
 
 <tr>
@@ -3731,11 +3964,11 @@ public static T[] GetExtensions<T>() where T : class
 <td>
 
 ```csharp
-public static bool TryGetExtensions<T>(out T[] extensions) where T : class
+public bool TryGetExtensions<T>(out T[] extensions) where T : class
 ```
 
 </td>
-<td>Attempts to retrieve all extensions of type T and returns whether any exist.</td>
+<td>Attempts to retrieve extensions of a given type and returns whether any exist.</td>
 </tr>
 
 <tr>
@@ -3744,11 +3977,11 @@ public static bool TryGetExtensions<T>(out T[] extensions) where T : class
 <td>
 
 ```csharp
-public static bool HasExtension<T>() where T : class
+public bool HasExtension<T>() where T : class
 ```
 
 </td>
-<td>Checks whether at least one extension of type T exists in the database.</td>
+<td>Checks if any extension of the specified type exists in the global database.</td>
 </tr>
 
 <tr>
@@ -3757,22 +3990,88 @@ public static bool HasExtension<T>() where T : class
 <td>
 
 ```csharp
-public static T AddExtension<T>() where T : DBExtensionBase, new()
+public T AddExtension<T>() where T : DBExtensionBase, new()
 ```
 
 </td>
-<td>Creates and registers a new extension instance in the database.</td>
+<td>Creates and registers a new extension instance in the global ElysiumDatabase context.</td>
+</tr>
+
+<tr>
+<a id="ModuDevCore.ElysiumDB.Extension.DBExtensionBase.RemoveExtension"></a>
+<td><code>RemoveExtension</code></td>
+<td>
+
+```csharp
+public bool RemoveExtension<T>() where T : DBExtensionBase, new()
+```
+
+</td>
+<td>Removes an extension of the specified type from the global database context.</td>
+</tr>
+
+<tr>
+<a id="ModuDevCore.ElysiumDB.Extension.DBExtensionBase.OnInitialize"></a>
+<td><code>OnInitialize</code></td>
+<td>
+
+```csharp
+protected virtual void OnInitialize(ElysiumDatabase elysium)
+```
+
+</td>
+<td>Override point for extension initialization logic.</td>
+</tr>
+
+<tr>
+<a id="ModuDevCore.ElysiumDB.Extension.DBExtensionBase.OnDispose"></a>
+<td><code>OnDispose</code></td>
+<td>
+
+```csharp
+protected virtual void OnDispose()
+```
+
+</td>
+<td>Override point for extension cleanup logic.</td>
+</tr>
+
+<tr>
+<a id="ModuDevCore.ElysiumDB.Extension.DBExtensionBase.Log"></a>
+<td><code>Log</code></td>
+<td>
+
+```csharp
+public void Log(object message)
+```
+
+</td>
+<td>Logs a message prefixed with the extension runtime name.</td>
 </tr>
 
 </table>
 
-### Enum
+---
 
-None
+## Enum
 
-### Nested Classes
+<table>
+<tr>
+<td colspan="3">None</td>
+</tr>
+</table>
 
-None
+---
+
+## Nested Classes
+
+<table>
+<tr>
+<td colspan="3">None</td>
+</tr>
+</table>
+
+---
 
 </details>
 <a id="ModuDevCore.ElysiumDB.Editor.ExtensionDrawer"></a>

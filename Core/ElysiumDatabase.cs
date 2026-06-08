@@ -83,70 +83,99 @@ namespace ModuDevCore.ElysiumDB
 		        Debug.LogError($"[ElysiumDB] Error in extension {extension.GetType().Name} during {evt}: {e}");
 		    }
 		}
-	    public static T GetExtension<T>() where T : class
-	    {
-	        var ext = Settings.extensions.OfType<T>().FirstOrDefault();
-	        if (ext == null)
-	        {
-	            Debug.LogWarning($"[ElysiumDB] Extension {typeof(T).Name} not found.");
-	        }
-	        return ext;
-	    }
+		public static T GetExtension<T>() where T : class
+		    => GetExtensions<T>().FirstOrDefault();
+		public static T[] GetExtensions<T>() where T : class
+		    => GetExtensions(typeof(T)).Cast<T>().ToArray();
 
-	    public static T[] GetExtensions<T>() where T : class
-	    {
-	        var extensions = Settings.extensions.OfType<T>().ToArray();
+		public static bool HasExtension<T>() where T : class
+		    => HasExtension(typeof(T));
 
-	        if (extensions.Length == 0)
-	        {
-	            Debug.LogWarning($"[ElysiumDB] Extensions of type {typeof(T).Name} not found.");
-	        }
-
-	        return extensions;
-	    }
-
-	    public static bool HasExtension<T>() where T : class
-	    {
-	        return Settings.extensions.OfType<T>().Any();
-	    }
-
-	    public static bool TryGetExtension<T>(out T extension) where T : class
-	    {
-	        extension = Settings.extensions.OfType<T>().FirstOrDefault();
-	        return extension != null;
-	    }
+		public static bool TryGetExtension<T>(out T extension) where T : class
+		{
+		    var result = TryGetExtension(typeof(T), out object obj);
+		    extension = (T)obj;
+		    return result;
+		}
 
 		public static T AddExtension<T>() where T : DBExtensionBase, new()
+		    => (T)AddExtension(typeof(T));
+
+		public static bool RemoveExtension<T>() where T : DBExtensionBase
+		    => RemoveExtension(typeof(T));
+
+		public static object GetExtension(Type type)
 		{
-		    if (TryGetExtension<T>(out T existing))
-		        return existing;
+		    if (type == null) throw new ArgumentNullException(nameof(type));
 
-		    var extension = new T();
+		    return GetExtensions(type).FirstOrDefault();
+		}
+		public static object[] GetExtensions(Type type)
+		{
+		    if (type == null) throw new ArgumentNullException(nameof(type));
 
+		    var extensions = Settings.extensions.Where(e => e != null && type.IsAssignableFrom(e.GetType()))
+		                                       .ToArray();
+
+		    if (extensions.Length == 0)
+		    {
+		        Debug.LogWarning($"[ElysiumDB] Extensions of type {type.Name} not found.");
+		    }
+		    return extensions;
+		}
+
+		public static bool HasExtension(Type type)
+		{
+		    if (type == null) throw new ArgumentNullException(nameof(type));
+		    return Settings.extensions.Any(e => e != null && type.IsAssignableFrom(e.GetType()));
+		}
+
+		public static bool TryGetExtension(Type type, out object extension)
+		{
+		    if (type == null) throw new ArgumentNullException(nameof(type));
+
+		    extension = Settings.extensions.FirstOrDefault(e => e != null && type.IsAssignableFrom(e.GetType()));
+		    return extension != null;
+		}
+
+		public static object AddExtension(Type type)
+		{
+		    if (type == null) throw new ArgumentNullException(nameof(type));
+		    if (!typeof(DBExtensionBase).IsAssignableFrom(type))
+		        throw new ArgumentException($"Type {type.Name} must inherit from DBExtensionBase");
+
+		    var extension = (DBExtensionBase)Activator.CreateInstance(type);
+
+		    var defaultExtensionGroupAttribute = type.GetCustomAttribute<DefaultExtensionGroupAttribute>();
+		    if (defaultExtensionGroupAttribute != null)
+		    {
+		        extension.extensionGroup = defaultExtensionGroupAttribute.ExtensionGroup;
+		    }
 
 		    Settings.extensions.Add(extension);
 
 		    ElysiumDatabase context = Instance;
-		    if(context != null)
-		    	context.SafeProcess(extension, ExtensionEvent.Initialize);
+		    if (context != null)
+		        context.SafeProcess(extension, ExtensionEvent.Initialize);
 
-		    if (!Settings.extensions.Any(e => e?.GetType() == typeof(T)))
+		    if (!Settings.extensions.Any(e => e?.GetType() == type))
 		    {
 		        EditorUtility.SetDirty(Settings);
 		    }
 
-		    Debug.Log($"[ElysiumDB] Extension added: {typeof(T).Name}");
-
+		    Debug.Log($"[ElysiumDB] Extension added: {type.Name}");
 		    return extension;
 		}
-		public static bool RemoveExtension<T>() where T : DBExtensionBase
+
+		public static bool RemoveExtension(Type type)
 		{
-		    var extension =
-		        Settings.extensions.FirstOrDefault(e => e is T);
+		    if (type == null) throw new ArgumentNullException(nameof(type));
+
+		    var extension = Settings.extensions.FirstOrDefault(e => e != null && type.IsAssignableFrom(e.GetType()));
 
 		    if (extension == null)
 		    {
-		        Debug.LogWarning($"[ElysiumDB] Extension {typeof(T).Name} not found.");
+		        Debug.LogWarning($"[ElysiumDB] Extension {type.Name} not found.");
 		        return false;
 		    }
 
@@ -156,8 +185,7 @@ namespace ModuDevCore.ElysiumDB
 		    }
 		    catch (Exception e)
 		    {
-		        Debug.LogError(
-		            $"[ElysiumDB] Error disposing extension {typeof(T).Name}: {e}");
+		        Debug.LogError($"[ElysiumDB] Error disposing extension {type.Name}: {e}");
 		    }
 
 		    Settings.extensions.Remove(extension);
@@ -167,10 +195,10 @@ namespace ModuDevCore.ElysiumDB
 		    UnityEditor.AssetDatabase.SaveAssets();
 		#endif
 
-		    Debug.Log($"[ElysiumDB] Extension removed: {typeof(T).Name}");
-
+		    Debug.Log($"[ElysiumDB] Extension removed: {type.Name}");
 		    return true;
 		}
+
 		public static List<Type> GetRequiresExtensions(Type extensionType)
 		{
 		    if (Settings.extensions == null || Settings.extensions.Count == 0)

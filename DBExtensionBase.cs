@@ -38,16 +38,13 @@ namespace ModuDevCore.ElysiumDB.Extension
 	    }
 		public T GetExtension<T>() where T : class
 		        => ElysiumDatabase.GetExtension<T>();
-
 		public T[] GetExtensions<T>() where T : class
 		        => ElysiumDatabase.GetExtensions<T>();
-
 	    public bool TryGetExtensions<T>(out T[] extensions) where T : class
 	    {
 	        extensions = ElysiumDatabase.GetExtensions<T>();
 	        return extensions.Length > 0;
 	    }
-
 		public bool HasExtension<T>() where T : class
 		        => ElysiumDatabase.HasExtension<T>();
 
