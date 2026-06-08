@@ -4,9 +4,9 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 
-using ModuDevCore.ElysiumDB.Editor.GUI.Text;
+using ModuDevCore.ElysiumDB.Editor.Internal.GUI.Text;
 
-namespace ModuDevCore.ElysiumDB.Editor.GUI.List
+namespace ModuDevCore.ElysiumDB.Editor.Internal.GUI.List
 {
     public class CustomList
     {

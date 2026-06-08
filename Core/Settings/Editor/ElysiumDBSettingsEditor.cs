@@ -9,7 +9,7 @@ using UnityEngine;
 
 using ModuDevCore.ElysiumDB.Extension;
 using ModuDevCore.ElysiumDB.Editor.Internal;
-using ModuDevCore.ElysiumDB.Editor.GUI.List;
+using ModuDevCore.ElysiumDB.Editor.Internal.GUI.List;
 
 namespace ModuDevCore.ElysiumDB.Core.Settings.Editor
 {

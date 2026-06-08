@@ -1,9 +1,9 @@
 using UnityEngine;
 using UnityEditor;
 using ModuDevCore.ElysiumDB.Extension;
-using ModuDevCore.ElysiumDB.Editor.GUI.List;
+using ModuDevCore.ElysiumDB.Editor.Internal.GUI.List;
 
-namespace ModuDevCore.ElysiumDB.Editor {
+namespace ModuDevCore.ElysiumDB.Editor.Internal {
     [CustomPropertyDrawer(typeof(DBExtensionBase), true)]
     public class DBExtensionBaseDrawer : PropertyDrawer
     {

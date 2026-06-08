@@ -828,8 +828,8 @@ None
 None
 ---
 
-<a id="ModuDevCore.ElysiumDB.Editor.DBPostprocessor"></a>
-## ModuDevCore.ElysiumDB.Editor.DBPostprocessor
+<a id="ModuDevCore.ElysiumDB.Editor.Internal.DBPostprocessor"></a>
+## ModuDevCore.ElysiumDB.Editor.Internal.DBPostprocessor
 
 ### Opportunities
 
@@ -861,7 +861,7 @@ Handles Unity asset import events for ElysiumDB. Ensures required folders and se
 </tr>
 
 <tr>
-<a id="ModuDevCore.ElysiumDB.Editor.DBPostprocessor.RootFolder"></a>
+<a id="ModuDevCore.ElysiumDB.Editor.Internal.DBPostprocessor.RootFolder"></a>
 <td><code>RootFolder</code></td>
 <td>
 
@@ -874,7 +874,7 @@ private const string RootFolder = "Assets/ElysiumDB";
 </tr>
 
 <tr>
-<a id="ModuDevCore.ElysiumDB.Editor.DBPostprocessor.ResourcesFolder"></a>
+<a id="ModuDevCore.ElysiumDB.Editor.Internal.DBPostprocessor.ResourcesFolder"></a>
 <td><code>ResourcesFolder</code></td>
 <td>
 
@@ -887,7 +887,7 @@ private const string ResourcesFolder = "Assets/ElysiumDB/Resources";
 </tr>
 
 <tr>
-<a id="ModuDevCore.ElysiumDB.Editor.DBPostprocessor.AssetPath"></a>
+<a id="ModuDevCore.ElysiumDB.Editor.Internal.DBPostprocessor.AssetPath"></a>
 <td><code>AssetPath</code></td>
 <td>
 
@@ -900,7 +900,7 @@ private const string AssetPath = "Assets/ElysiumDB/Resources/ElysiumDB Settings.
 </tr>
 
 <tr>
-<a id="ModuDevCore.ElysiumDB.Editor.DBPostprocessor._isProcessing"></a>
+<a id="ModuDevCore.ElysiumDB.Editor.Internal.DBPostprocessor._isProcessing"></a>
 <td><code>_isProcessing</code></td>
 <td>
 
@@ -932,7 +932,7 @@ None
 </tr>
 
 <tr>
-<a id="ModuDevCore.ElysiumDB.Editor.DBPostprocessor.SafetyFixExtensions"></a>
+<a id="ModuDevCore.ElysiumDB.Editor.Internal.DBPostprocessor.SafetyFixExtensions"></a>
 <td><code>SafetyFixExtensions</code></td>
 <td>
 
@@ -945,7 +945,7 @@ public static void SafetyFixExtensions()
 </tr>
 
 <tr>
-<a id="ModuDevCore.ElysiumDB.Editor.DBPostprocessor.OnPostprocessAllAssets"></a>
+<a id="ModuDevCore.ElysiumDB.Editor.Internal.DBPostprocessor.OnPostprocessAllAssets"></a>
 <td><code>OnPostprocessAllAssets</code></td>
 <td>
 
@@ -962,7 +962,7 @@ static void OnPostprocessAllAssets(
 </tr>
 
 <tr>
-<a id="ModuDevCore.ElysiumDB.Editor.DBPostprocessor.IsRelevant"></a>
+<a id="ModuDevCore.ElysiumDB.Editor.Internal.DBPostprocessor.IsRelevant"></a>
 <td><code>IsRelevant</code></td>
 <td>
 
@@ -978,7 +978,7 @@ private static bool IsRelevant(
 </tr>
 
 <tr>
-<a id="ModuDevCore.ElysiumDB.Editor.DBPostprocessor.SafetyFix"></a>
+<a id="ModuDevCore.ElysiumDB.Editor.Internal.DBPostprocessor.SafetyFix"></a>
 <td><code>SafetyFix</code></td>
 <td>
 
@@ -991,7 +991,7 @@ static void SafetyFix()
 </tr>
 
 <tr>
-<a id="ModuDevCore.ElysiumDB.Editor.DBPostprocessor.EnsureFolders"></a>
+<a id="ModuDevCore.ElysiumDB.Editor.Internal.DBPostprocessor.EnsureFolders"></a>
 <td><code>EnsureFolders</code></td>
 <td>
 
@@ -1004,7 +1004,7 @@ static void EnsureFolders()
 </tr>
 
 <tr>
-<a id="ModuDevCore.ElysiumDB.Editor.DBPostprocessor.FindSettings"></a>
+<a id="ModuDevCore.ElysiumDB.Editor.Internal.DBPostprocessor.FindSettings"></a>
 <td><code>FindSettings</code></td>
 <td>
 
@@ -1032,8 +1032,8 @@ None
 
 ---
 
-<a id="ModuDevCore.ElysiumDB.Editor.GUI.List.CustomList"></a>
-## ModuDevCore.ElysiumDB.Editor.GUI.List.CustomList
+<a id="ModuDevCore.ElysiumDB.Editor.Internal.GUI.List.CustomList"></a>
+## ModuDevCore.ElysiumDB.Editor.Internal.GUI.List.CustomList
 
 ### Opportunities
 
@@ -1065,7 +1065,7 @@ Provides a custom Unity Editor list control for editing serialized string arrays
 </tr>
 
 <tr>
-<a id="ModuDevCore.ElysiumDB.Editor.GUI.List.CustomList._focusIndex"></a>
+<a id="ModuDevCore.ElysiumDB.Editor.Internal.GUI.List.CustomList._focusIndex"></a>
 <td><code>_focusIndex</code></td>
 <td>
 
@@ -1078,7 +1078,7 @@ private int _focusIndex = -1;
 </tr>
 
 <tr>
-<a id="ModuDevCore.ElysiumDB.Editor.GUI.List.CustomList._focusRequested"></a>
+<a id="ModuDevCore.ElysiumDB.Editor.Internal.GUI.List.CustomList._focusRequested"></a>
 <td><code>_focusRequested</code></td>
 <td>
 
@@ -1091,7 +1091,7 @@ private bool _focusRequested;
 </tr>
 
 <tr>
-<a id="ModuDevCore.ElysiumDB.Editor.GUI.List.CustomList._selectRequested"></a>
+<a id="ModuDevCore.ElysiumDB.Editor.Internal.GUI.List.CustomList._selectRequested"></a>
 <td><code>_selectRequested</code></td>
 <td>
 
@@ -1104,7 +1104,7 @@ private bool _selectRequested;
 </tr>
 
 <tr>
-<a id="ModuDevCore.ElysiumDB.Editor.GUI.List.CustomList._list"></a>
+<a id="ModuDevCore.ElysiumDB.Editor.Internal.GUI.List.CustomList._list"></a>
 <td><code>_list</code></td>
 <td>
 
@@ -1117,7 +1117,7 @@ private SerializedProperty _list;
 </tr>
 
 <tr>
-<a id="ModuDevCore.ElysiumDB.Editor.GUI.List.CustomList._serializedObject"></a>
+<a id="ModuDevCore.ElysiumDB.Editor.Internal.GUI.List.CustomList._serializedObject"></a>
 <td><code>_serializedObject</code></td>
 <td>
 
@@ -1130,7 +1130,7 @@ private SerializedObject _serializedObject;
 </tr>
 
 <tr>
-<a id="ModuDevCore.ElysiumDB.Editor.GUI.List.CustomList._label"></a>
+<a id="ModuDevCore.ElysiumDB.Editor.Internal.GUI.List.CustomList._label"></a>
 <td><code>_label</code></td>
 <td>
 
@@ -1143,7 +1143,7 @@ private string _label;
 </tr>
 
 <tr>
-<a id="ModuDevCore.ElysiumDB.Editor.GUI.List.CustomList._placeholder"></a>
+<a id="ModuDevCore.ElysiumDB.Editor.Internal.GUI.List.CustomList._placeholder"></a>
 <td><code>_placeholder</code></td>
 <td>
 
@@ -1156,7 +1156,7 @@ private string _placeholder;
 </tr>
 
 <tr>
-<a id="ModuDevCore.ElysiumDB.Editor.GUI.List.CustomList.tfps"></a>
+<a id="ModuDevCore.ElysiumDB.Editor.Internal.GUI.List.CustomList.tfps"></a>
 <td><code>tfps</code></td>
 <td>
 
@@ -1169,7 +1169,7 @@ private Dictionary<string, IMGUITextFieldPro> tfps = new();
 </tr>
 
 <tr>
-<a id="ModuDevCore.ElysiumDB.Editor.GUI.List.CustomList._usedThisFrame"></a>
+<a id="ModuDevCore.ElysiumDB.Editor.Internal.GUI.List.CustomList._usedThisFrame"></a>
 <td><code>_usedThisFrame</code></td>
 <td>
 
@@ -1201,7 +1201,7 @@ None
 </tr>
 
 <tr>
-<a id="ModuDevCore.ElysiumDB.Editor.GUI.List.CustomList.CustomList"></a>
+<a id="ModuDevCore.ElysiumDB.Editor.Internal.GUI.List.CustomList.CustomList"></a>
 <td><code>CustomList</code></td>
 <td>
 
@@ -1218,7 +1218,7 @@ public CustomList(
 </tr>
 
 <tr>
-<a id="ModuDevCore.ElysiumDB.Editor.GUI.List.CustomList.Draw"></a>
+<a id="ModuDevCore.ElysiumDB.Editor.Internal.GUI.List.CustomList.Draw"></a>
 <td><code>Draw</code></td>
 <td>
 
@@ -1231,7 +1231,7 @@ public void Draw()
 </tr>
 
 <tr>
-<a id="ModuDevCore.ElysiumDB.Editor.GUI.List.CustomList.DrawTextField"></a>
+<a id="ModuDevCore.ElysiumDB.Editor.Internal.GUI.List.CustomList.DrawTextField"></a>
 <td><code>DrawTextField</code></td>
 <td>
 
@@ -1247,7 +1247,7 @@ IMGUITextFieldPro DrawTextField(
 </tr>
 
 <tr>
-<a id="ModuDevCore.ElysiumDB.Editor.GUI.List.CustomList.CleanupUnused"></a>
+<a id="ModuDevCore.ElysiumDB.Editor.Internal.GUI.List.CustomList.CleanupUnused"></a>
 <td><code>CleanupUnused</code></td>
 <td>
 
@@ -1275,8 +1275,8 @@ None
 
 ---
 
-<a id="ModuDevCore.ElysiumDB.Editor.DBExtensionBaseDrawer"></a>
-## ModuDevCore.ElysiumDB.Editor.DBExtensionBaseDrawer
+<a id="ModuDevCore.ElysiumDB.Editor.Internal.DBExtensionBaseDrawer"></a>
+## ModuDevCore.ElysiumDB.Editor.Internal.DBExtensionBaseDrawer
 
 ### Opportunities
 
@@ -1321,7 +1321,7 @@ None
 </tr>
 
 <tr>
-<a id="ModuDevCore.ElysiumDB.Editor.DBExtensionBaseDrawer.OnGUI"></a>
+<a id="ModuDevCore.ElysiumDB.Editor.Internal.DBExtensionBaseDrawer.OnGUI"></a>
 <td><code>OnGUI</code></td>
 <td>
 
@@ -1337,7 +1337,7 @@ public override void OnGUI(
 </tr>
 
 <tr>
-<a id="ModuDevCore.ElysiumDB.Editor.DBExtensionBaseDrawer.GetPropertyHeight"></a>
+<a id="ModuDevCore.ElysiumDB.Editor.Internal.DBExtensionBaseDrawer.GetPropertyHeight"></a>
 <td><code>GetPropertyHeight</code></td>
 <td>
 
@@ -1352,7 +1352,7 @@ public override float GetPropertyHeight(
 </tr>
 
 <tr>
-<a id="ModuDevCore.ElysiumDB.Editor.DBExtensionBaseDrawer.DrawChildrenWithoutHeader"></a>
+<a id="ModuDevCore.ElysiumDB.Editor.Internal.DBExtensionBaseDrawer.DrawChildrenWithoutHeader"></a>
 <td><code>DrawChildrenWithoutHeader</code></td>
 <td>
 
@@ -1367,7 +1367,7 @@ private void DrawChildrenWithoutHeader(
 </tr>
 
 <tr>
-<a id="ModuDevCore.ElysiumDB.Editor.DBExtensionBaseDrawer.GetChildrenHeight"></a>
+<a id="ModuDevCore.ElysiumDB.Editor.Internal.DBExtensionBaseDrawer.GetChildrenHeight"></a>
 <td><code>GetChildrenHeight</code></td>
 <td>
 
@@ -3130,8 +3130,8 @@ None
 
 ---
 
-<a id="ModuDevCore.ElysiumDB.Editor.GUI.Text.IMGUITextFieldPro"></a>
-## ModuDevCore.ElysiumDB.Editor.GUI.Text.IMGUITextFieldPro
+<a id="ModuDevCore.ElysiumDB.Editor.Internal.GUI.Text.IMGUITextFieldPro"></a>
+## ModuDevCore.ElysiumDB.Editor.Internal.GUI.Text.IMGUITextFieldPro
 
 ### Opportunities
 
@@ -3161,7 +3161,7 @@ A custom IMGUI-based text field implementation for Unity Editor that provides ad
 </tr>
 
 <tr>
-<a id="ModuDevCore.ElysiumDB.Editor.GUI.Text.IMGUITextFieldPro.text"></a>
+<a id="ModuDevCore.ElysiumDB.Editor.Internal.GUI.Text.IMGUITextFieldPro.text"></a>
 <td><code>text</code></td>
 <td>
 
@@ -3174,7 +3174,7 @@ public string text;
 </tr>
 
 <tr>
-<a id="ModuDevCore.ElysiumDB.Editor.GUI.Text.IMGUITextFieldPro.caret"></a>
+<a id="ModuDevCore.ElysiumDB.Editor.Internal.GUI.Text.IMGUITextFieldPro.caret"></a>
 <td><code>caret</code></td>
 <td>
 
@@ -3187,7 +3187,7 @@ public int caret;
 </tr>
 
 <tr>
-<a id="ModuDevCore.ElysiumDB.Editor.GUI.Text.IMGUITextFieldPro.select"></a>
+<a id="ModuDevCore.ElysiumDB.Editor.Internal.GUI.Text.IMGUITextFieldPro.select"></a>
 <td><code>select</code></td>
 <td>
 
@@ -3200,7 +3200,7 @@ public int select;
 </tr>
 
 <tr>
-<a id="ModuDevCore.ElysiumDB.Editor.GUI.Text.IMGUITextFieldPro.hasFocus"></a>
+<a id="ModuDevCore.ElysiumDB.Editor.Internal.GUI.Text.IMGUITextFieldPro.hasFocus"></a>
 <td><code>hasFocus</code></td>
 <td>
 
@@ -3213,7 +3213,7 @@ public bool hasFocus;
 </tr>
 
 <tr>
-<a id="ModuDevCore.ElysiumDB.Editor.GUI.Text.IMGUITextFieldPro.placeholder"></a>
+<a id="ModuDevCore.ElysiumDB.Editor.Internal.GUI.Text.IMGUITextFieldPro.placeholder"></a>
 <td><code>placeholder</code></td>
 <td>
 
@@ -3226,7 +3226,7 @@ public string placeholder;
 </tr>
 
 <tr>
-<a id="ModuDevCore.ElysiumDB.Editor.GUI.Text.IMGUITextFieldPro.NormalBackground"></a>
+<a id="ModuDevCore.ElysiumDB.Editor.Internal.GUI.Text.IMGUITextFieldPro.NormalBackground"></a>
 <td><code>NormalBackground</code></td>
 <td>
 
@@ -3239,7 +3239,7 @@ public Color NormalBackground;
 </tr>
 
 <tr>
-<a id="ModuDevCore.ElysiumDB.Editor.GUI.Text.IMGUITextFieldPro.FocusedBackground"></a>
+<a id="ModuDevCore.ElysiumDB.Editor.Internal.GUI.Text.IMGUITextFieldPro.FocusedBackground"></a>
 <td><code>FocusedBackground</code></td>
 <td>
 
@@ -3252,7 +3252,7 @@ public Color FocusedBackground;
 </tr>
 
 <tr>
-<a id="ModuDevCore.ElysiumDB.Editor.GUI.Text.IMGUITextFieldPro.FocusAccentColor"></a>
+<a id="ModuDevCore.ElysiumDB.Editor.Internal.GUI.Text.IMGUITextFieldPro.FocusAccentColor"></a>
 <td><code>FocusAccentColor</code></td>
 <td>
 
@@ -3265,7 +3265,7 @@ public Color FocusAccentColor;
 </tr>
 
 <tr>
-<a id="ModuDevCore.ElysiumDB.Editor.GUI.Text.IMGUITextFieldPro.textStyle"></a>
+<a id="ModuDevCore.ElysiumDB.Editor.Internal.GUI.Text.IMGUITextFieldPro.textStyle"></a>
 <td><code>textStyle</code></td>
 <td>
 
@@ -3278,7 +3278,7 @@ public GUIStyle textStyle;
 </tr>
 
 <tr>
-<a id="ModuDevCore.ElysiumDB.Editor.GUI.Text.IMGUITextFieldPro.placeholderStyle"></a>
+<a id="ModuDevCore.ElysiumDB.Editor.Internal.GUI.Text.IMGUITextFieldPro.placeholderStyle"></a>
 <td><code>placeholderStyle</code></td>
 <td>
 
@@ -3291,7 +3291,7 @@ public GUIStyle placeholderStyle;
 </tr>
 
 <tr>
-<a id="ModuDevCore.ElysiumDB.Editor.GUI.Text.IMGUITextFieldPro.dragging"></a>
+<a id="ModuDevCore.ElysiumDB.Editor.Internal.GUI.Text.IMGUITextFieldPro.dragging"></a>
 <td><code>dragging</code></td>
 <td>
 
@@ -3304,7 +3304,7 @@ public bool dragging;
 </tr>
 
 <tr>
-<a id="ModuDevCore.ElysiumDB.Editor.GUI.Text.IMGUITextFieldPro.drawBackground"></a>
+<a id="ModuDevCore.ElysiumDB.Editor.Internal.GUI.Text.IMGUITextFieldPro.drawBackground"></a>
 <td><code>drawBackground</code></td>
 <td>
 
@@ -3346,7 +3346,7 @@ public bool drawBackground;
 </tr>
 
 <tr>
-<a id="ModuDevCore.ElysiumDB.Editor.GUI.Text.IMGUITextFieldPro.IMGUITextFieldPro"></a>
+<a id="ModuDevCore.ElysiumDB.Editor.Internal.GUI.Text.IMGUITextFieldPro.IMGUITextFieldPro"></a>
 <td><code>IMGUITextFieldPro</code></td>
 <td>
 
@@ -3359,7 +3359,7 @@ public IMGUITextFieldPro(string name, string initial = "", string placeholderTex
 </tr>
 
 <tr>
-<a id="ModuDevCore.ElysiumDB.Editor.GUI.Text.IMGUITextFieldPro.Draw"></a>
+<a id="ModuDevCore.ElysiumDB.Editor.Internal.GUI.Text.IMGUITextFieldPro.Draw"></a>
 <td><code>Draw</code></td>
 <td>
 
@@ -3372,7 +3372,7 @@ public void Draw()
 </tr>
 
 <tr>
-<a id="ModuDevCore.ElysiumDB.Editor.GUI.Text.IMGUITextFieldPro.DrawRect"></a>
+<a id="ModuDevCore.ElysiumDB.Editor.Internal.GUI.Text.IMGUITextFieldPro.DrawRect"></a>
 <td><code>Draw</code></td>
 <td>
 
@@ -3385,7 +3385,7 @@ public void Draw(Rect rect)
 </tr>
 
 <tr>
-<a id="ModuDevCore.ElysiumDB.Editor.GUI.Text.IMGUITextFieldPro.Focus"></a>
+<a id="ModuDevCore.ElysiumDB.Editor.Internal.GUI.Text.IMGUITextFieldPro.Focus"></a>
 <td><code>Focus</code></td>
 <td>
 
@@ -3398,7 +3398,7 @@ public void Focus()
 </tr>
 
 <tr>
-<a id="ModuDevCore.ElysiumDB.Editor.GUI.Text.IMGUITextFieldPro.SetSelection"></a>
+<a id="ModuDevCore.ElysiumDB.Editor.Internal.GUI.Text.IMGUITextFieldPro.SetSelection"></a>
 <td><code>SetSelection</code></td>
 <td>
 
@@ -3411,7 +3411,7 @@ public void SetSelection(int start, int end)
 </tr>
 
 <tr>
-<a id="ModuDevCore.ElysiumDB.Editor.GUI.Text.IMGUITextFieldPro.SelectAll"></a>
+<a id="ModuDevCore.ElysiumDB.Editor.Internal.GUI.Text.IMGUITextFieldPro.SelectAll"></a>
 <td><code>SelectAll</code></td>
 <td>
 
@@ -3424,7 +3424,7 @@ public void SelectAll()
 </tr>
 
 <tr>
-<a id="ModuDevCore.ElysiumDB.Editor.GUI.Text.IMGUITextFieldPro.ClearSelection"></a>
+<a id="ModuDevCore.ElysiumDB.Editor.Internal.GUI.Text.IMGUITextFieldPro.ClearSelection"></a>
 <td><code>ClearSelection</code></td>
 <td>
 
@@ -3437,7 +3437,7 @@ public void ClearSelection()
 </tr>
 
 <tr>
-<a id="ModuDevCore.ElysiumDB.Editor.GUI.Text.IMGUITextFieldPro.GetSelectedText"></a>
+<a id="ModuDevCore.ElysiumDB.Editor.Internal.GUI.Text.IMGUITextFieldPro.GetSelectedText"></a>
 <td><code>GetSelectedText</code></td>
 <td>
 
@@ -3450,7 +3450,7 @@ public string GetSelectedText()
 </tr>
 
 <tr>
-<a id="ModuDevCore.ElysiumDB.Editor.GUI.Text.IMGUITextFieldPro.HasSelection"></a>
+<a id="ModuDevCore.ElysiumDB.Editor.Internal.GUI.Text.IMGUITextFieldPro.HasSelection"></a>
 <td><code>HasSelection</code></td>
 <td>
 

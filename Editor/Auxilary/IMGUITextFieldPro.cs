@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace ModuDevCore.ElysiumDB.Editor.GUI.Text {
+namespace ModuDevCore.ElysiumDB.Editor.Internal.GUI.Text {
     public class IMGUITextFieldPro
     {
         public string text;
