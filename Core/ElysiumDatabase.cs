@@ -83,7 +83,7 @@ namespace ModuDevCore.ElysiumDB
 		        Debug.LogError($"[ElysiumDB] Error in extension {extension.GetType().Name} during {evt}: {e}");
 		    }
 		}
-	    public T GetExtension<T>() where T : class
+	    public static T GetExtension<T>() where T : class
 	    {
 	        var ext = Settings.extensions.OfType<T>().FirstOrDefault();
 	        if (ext == null)
@@ -93,7 +93,7 @@ namespace ModuDevCore.ElysiumDB
 	        return ext;
 	    }
 
-	    public T[] GetExtensions<T>() where T : class
+	    public static T[] GetExtensions<T>() where T : class
 	    {
 	        var extensions = Settings.extensions.OfType<T>().ToArray();
 
@@ -105,27 +105,30 @@ namespace ModuDevCore.ElysiumDB
 	        return extensions;
 	    }
 
-	    public bool HasExtension<T>() where T : class
+	    public static bool HasExtension<T>() where T : class
 	    {
 	        return Settings.extensions.OfType<T>().Any();
 	    }
 
-	    public bool TryGetExtension<T>(out T extension) where T : class
+	    public static bool TryGetExtension<T>(out T extension) where T : class
 	    {
 	        extension = Settings.extensions.OfType<T>().FirstOrDefault();
 	        return extension != null;
 	    }
 
-		public T AddExtension<T>() where T : DBExtensionBase, new()
+		public static T AddExtension<T>() where T : DBExtensionBase, new()
 		{
 		    if (TryGetExtension<T>(out T existing))
 		        return existing;
 
 		    var extension = new T();
 
-		    extension.Process(ExtensionEvent.Initialize, this);
 
 		    Settings.extensions.Add(extension);
+
+		    ElysiumDatabase context = Instance;
+		    if(context != null)
+		    	context.SafeProcess(extension, ExtensionEvent.Initialize);
 
 		    if (!Settings.extensions.Any(e => e?.GetType() == typeof(T)))
 		    {

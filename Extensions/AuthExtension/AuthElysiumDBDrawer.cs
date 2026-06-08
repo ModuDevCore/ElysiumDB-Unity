@@ -15,7 +15,7 @@ public class AuthElysiumDBDrawer : PropertyDrawer
         AuthElysiumDB auth = null;
         if (ElysiumDatabase.Instance != null)
         {
-            auth = ElysiumDatabase.Instance.GetExtension<AuthElysiumDB>();
+            auth = ElysiumDatabase.GetExtension<AuthElysiumDB>();
         }
 
         if (auth == null)

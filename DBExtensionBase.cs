@@ -37,22 +37,22 @@ namespace ModuDevCore.ElysiumDB.Extension
 	        }
 	    }
 		public static T GetExtension<T>() where T : class
-		        => ElysiumDatabase.Instance.GetExtension<T>();
+		        => ElysiumDatabase.GetExtension<T>();
 
 		public static T[] GetExtensions<T>() where T : class
-		        => ElysiumDatabase.Instance.GetExtensions<T>();
+		        => ElysiumDatabase.GetExtensions<T>();
 
 	    public static bool TryGetExtensions<T>(out T[] extensions) where T : class
 	    {
-	        extensions = ElysiumDatabase.Instance.GetExtensions<T>();
+	        extensions = ElysiumDatabase.GetExtensions<T>();
 	        return extensions.Length > 0;
 	    }
 
 		public static bool HasExtension<T>() where T : class
-		        => ElysiumDatabase.Instance.HasExtension<T>();
+		        => ElysiumDatabase.HasExtension<T>();
 
 		public static T AddExtension<T>() where T : DBExtensionBase, new()
-		        => ElysiumDatabase.Instance.AddExtension<T>();
+		        => ElysiumDatabase.AddExtension<T>();
 
         protected virtual void OnInitialize(ElysiumDatabase elysium) {}
         protected virtual void OnDispose() {}
