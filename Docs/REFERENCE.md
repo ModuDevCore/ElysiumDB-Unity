@@ -454,6 +454,111 @@ public RequireExtensionAttribute(
 
 ---
 
+<a id="ModuDevCore.ElysiumDB.ExtensionProcessOrderAttribute"></a>
+
+## ModuDevCore.ElysiumDB.ExtensionProcessOrderAttribute
+
+### Opportunities
+
+* Defines processing order for database extensions.
+* Allows grouping extensions into execution pipelines.
+* Provides deterministic extension execution sequence.
+
+---
+
+### Class
+
+```csharp
+public class ExtensionProcessOrderAttribute : Attribute
+```
+
+---
+
+Attribute used to specify the processing group and execution order of an extension.
+
+---
+
+## Fields
+
+**None**
+
+---
+
+## Properties
+
+<table>
+<tr>
+<th>Property</th>
+<th>Declaration</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<a id="ModuDevCore.ElysiumDB.ExtensionProcessOrderAttribute.Group"></a>
+<td><code>Group</code></td>
+<td>
+
+```csharp
+public string Group { get; }
+```
+
+</td>
+<td>Gets the extension processing group name.</td>
+</tr>
+
+<tr>
+<a id="ModuDevCore.ElysiumDB.ExtensionProcessOrderAttribute.Order"></a>
+<td><code>Order</code></td>
+<td>
+
+```csharp
+public int Order { get; }
+```
+
+</td>
+<td>Gets the execution order within the specified group.</td>
+</tr>
+</table>
+
+---
+
+## Methods
+
+<table>
+<tr>
+<th>Method</th>
+<th>Declaration</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<a id="ModuDevCore.ElysiumDB.ExtensionProcessOrderAttribute.ExtensionProcessOrderAttribute"></a>
+<td><code>ExtensionProcessOrderAttribute</code></td>
+<td>
+
+```csharp
+public ExtensionProcessOrderAttribute(string group, int order = 0)
+```
+
+</td>
+<td>Initializes a new instance of the attribute with the specified group and execution order.</td>
+</tr>
+</table>
+
+---
+
+## Enum
+
+**None**
+
+---
+
+## Nested Classes
+
+**None**
+
+---
+
 <a id="ModuDevCore.ElysiumDB.Extension.DBExtensionBase"></a>
 
 ## ModuDevCore.ElysiumDB.Extension.DBExtensionBase

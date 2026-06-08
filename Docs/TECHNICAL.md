@@ -752,6 +752,82 @@ None
 
 ---
 
+<a id="ModuDevCore.ElysiumDB.ExtensionProcessOrderAttribute"></a>
+## ModuDevCore.ElysiumDB.ExtensionProcessOrderAttribute
+### Opportunities
+* Provides clean and explicit control over the initialization and disposal order of ElysiumDB extensions
+* Supports logical grouping of extensions (e.g. all Supabase-related extensions in one group)
+* Ensures deterministic execution order for `Process(ExtensionEvent.Initialize)` and reverse order for `Dispose`
+* Works seamlessly with `RequireExtensionAttribute`
+* Maintains stable ordering when multiple extensions share the same `Group` and `Order`
+
+---
+### Class
+```csharp
+[AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
+public class ExtensionProcessOrderAttribute : Attribute
+```
+---
+Attribute that defines the group and execution order for `DBExtensionBase` extensions in the ElysiumDB system.
+---
+## Fields
+None
+---
+## Properties
+<table>
+<tr>
+<th>Property</th>
+<th>Declaration</th>
+<th>Description</th>
+</tr>
+<tr>
+<a id="ModuDevCore.ElysiumDB.ExtensionProcessOrderAttribute.Group"></a>
+<td><code>Group</code></td>
+<td>
+```csharp
+public string Group { get; }
+```
+</td>
+<td>The name of the group used for sorting extensions. Extensions within the same group are sorted by their `Order` value.</td>
+</tr>
+<tr>
+<a id="ModuDevCore.ElysiumDB.ExtensionProcessOrderAttribute.Order"></a>
+<td><code>Order</code></td>
+<td>
+```csharp
+public int Order { get; }
+```
+</td>
+<td>Execution order within the group. Lower values are executed first during initialization.</td>
+</tr>
+</table>
+---
+## Methods
+<table>
+<tr>
+<th>Method</th>
+<th>Declaration</th>
+<th>Description</th>
+</tr>
+<tr>
+<a id="ModuDevCore.ElysiumDB.ExtensionProcessOrderAttribute.ExtensionProcessOrderAttribute"></a>
+<td><code>ExtensionProcessOrderAttribute</code></td>
+<td>
+```csharp
+public ExtensionProcessOrderAttribute(string group, int order = 0)
+```
+</td>
+<td>Attribute constructor.<br>If `group` is `null`, the group `"Default"` will be used.</td>
+</tr>
+</table>
+---
+## Enum
+None
+---
+## Nested Classes
+None
+---
+
 <a id="ModuDevCore.ElysiumDB.Editor.DBPostprocessor"></a>
 ## ModuDevCore.ElysiumDB.Editor.DBPostprocessor
 

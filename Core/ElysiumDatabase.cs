@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
+using System.Reflection;
 
 using UnityEngine;
 using UnityEngine.Networking;
@@ -34,6 +35,54 @@ namespace ModuDevCore.ElysiumDB
 
         // ==================== Extensions ====================
 
+		void RunExtensionsProcess(ExtensionEvent processEvent)
+		{
+		    if (Settings.extensions == null || Settings.extensions.Count == 0)
+		        return;
+
+		    var orderedExtensions = Settings.extensions
+		        .OrderBy(ext =>
+		        {
+		            var attr = ext.GetType().GetCustomAttribute<ExtensionProcessOrderAttribute>();
+		            return (attr?.Group ?? "Default", attr?.Order ?? 0);
+		        })
+		        .ThenBy(ext => Settings.extensions.IndexOf(ext)) // стабильность
+		        .ToList();
+
+		    if (processEvent == ExtensionEvent.Initialize)
+		    {
+		        foreach (var extension in orderedExtensions)
+		        {
+		            SafeProcess(extension, processEvent);
+		        }
+		    }
+		    else if (processEvent == ExtensionEvent.Dispose)
+		    {
+		        for (int i = orderedExtensions.Count - 1; i >= 0; i--)
+		        {
+		            SafeProcess(orderedExtensions[i], processEvent);
+		        }
+		    }
+		    else
+		    {
+		        foreach (var extension in orderedExtensions)
+		        {
+		            SafeProcess(extension, processEvent);
+		        }
+		    }
+		}
+
+		private void SafeProcess(DBExtensionBase extension, ExtensionEvent evt)
+		{
+		    try
+		    {
+		        extension.Process(evt, this);
+		    }
+		    catch (Exception e)
+		    {
+		        Debug.LogError($"[ElysiumDB] Error in extension {extension.GetType().Name} during {evt}: {e}");
+		    }
+		}
 	    public T GetExtension<T>() where T : class
 	    {
 	        var ext = Settings.extensions.OfType<T>().FirstOrDefault();
@@ -171,9 +220,7 @@ namespace ModuDevCore.ElysiumDB
                 try { db.Dispose(); } catch { }
 
             Connections.Clear();
-            foreach(DBExtensionBase extension in Settings.extensions) {
-                extension.Process(ExtensionEvent.Initialize, this);
-            }
+            RunExtensionsProcess(ExtensionEvent.Initialize);
 
             foreach (var path in Settings.dbPaths)
             {
@@ -247,10 +294,7 @@ namespace ModuDevCore.ElysiumDB
 
             Connections.Clear();
 
-            foreach (var extension in Settings.extensions)
-            {
-                extension.Process(ExtensionEvent.Dispose);
-            }
+            RunExtensionsProcess(ExtensionEvent.Dispose);
 
             if (Instance == this)
                 Instance = null;
