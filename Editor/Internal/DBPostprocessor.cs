@@ -7,7 +7,7 @@ using UnityEditor;
 using ModuDevCore.ElysiumDB;
 using ModuDevCore.ElysiumDB.Core.Settings;
 
-namespace ModuDevCore.ElysiumDB.Editor 
+namespace ModuDevCore.ElysiumDB.Editor.Internal
 {
     public class DBPostprocessor : AssetPostprocessor
     {

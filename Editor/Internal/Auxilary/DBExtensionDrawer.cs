@@ -5,7 +5,7 @@ using UnityEditor;
 using UnityEngine;
 using System.Text.RegularExpressions;
 using UnityEditor.IMGUI.Controls;
-using ModuDevCore.ElysiumDB.Editor.GUI.Text;
+using ModuDevCore.ElysiumDB.Editor.Internal.GUI.Text;
 
 namespace ModuDevCore.ElysiumDB.Editor.Internal
 {
@@ -751,15 +751,8 @@ namespace ModuDevCore.ElysiumDB.Editor.Internal
                         false,
                         () =>
                         {
-                            int index = property.arraySize;
 
-                            property.InsertArrayElementAtIndex(index);
-
-                            SerializedProperty element =
-                                property.GetArrayElementAtIndex(index);
-
-                            element.boxedValue =
-                                Activator.CreateInstance(type);
+                            ElysiumDatabase.AddExtension(type);
 
                             property.serializedObject.ApplyModifiedProperties();
                             DBPostprocessor.SafetyFixExtensions();

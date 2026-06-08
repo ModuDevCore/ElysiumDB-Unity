@@ -16,11 +16,11 @@ namespace ModuDevCore.ElysiumDB.Extension
     	public string extensionGroup = "";
     	[HideInInspector]
     	public int extensionId = -1;
+    	public string extensionName => this.GetType().Name;
 
     	// INTERNAL
 	    public void Process(ExtensionEvent ev, ElysiumDatabase еlysium = null)
 	    {
-	    	string extensionName = this.GetType().Name;
 	        switch (ev)
 	        {
 	            case ExtensionEvent.Initialize:
@@ -36,25 +36,28 @@ namespace ModuDevCore.ElysiumDB.Extension
 	                break;
 	        }
 	    }
-		public static T GetExtension<T>() where T : class
-		        => ElysiumDatabase.Instance.GetExtension<T>();
-
-		public static T[] GetExtensions<T>() where T : class
-		        => ElysiumDatabase.Instance.GetExtensions<T>();
-
-	    public static bool TryGetExtensions<T>(out T[] extensions) where T : class
+		public T GetExtension<T>() where T : class
+		        => ElysiumDatabase.GetExtension<T>();
+		public T[] GetExtensions<T>() where T : class
+		        => ElysiumDatabase.GetExtensions<T>();
+	    public bool TryGetExtensions<T>(out T[] extensions) where T : class
 	    {
-	        extensions = ElysiumDatabase.Instance.GetExtensions<T>();
+	        extensions = ElysiumDatabase.GetExtensions<T>();
 	        return extensions.Length > 0;
 	    }
+		public bool HasExtension<T>() where T : class
+		        => ElysiumDatabase.HasExtension<T>();
 
-		public static bool HasExtension<T>() where T : class
-		        => ElysiumDatabase.Instance.HasExtension<T>();
-
-		public static T AddExtension<T>() where T : DBExtensionBase, new()
-		        => ElysiumDatabase.Instance.AddExtension<T>();
+		public T AddExtension<T>() where T : DBExtensionBase, new()
+		        => ElysiumDatabase.AddExtension<T>();
+		public bool RemoveExtension<T>() where T : DBExtensionBase, new()
+		    => ElysiumDatabase.RemoveExtension<T>();
 
         protected virtual void OnInitialize(ElysiumDatabase elysium) {}
         protected virtual void OnDispose() {}
+		public void Log(object message)
+	    {
+	        Debug.Log($"[{extensionName}] " + message);
+	    }
     }
 }
