@@ -3775,3 +3775,253 @@ None
 None
 
 </details>
+<a id="ModuDevCore.ElysiumDB.Editor.ExtensionDrawer"></a>
+
+## ModuDevCore.ElysiumDB.Editor.ExtensionDrawer
+
+### Opportunities
+
+* Provides unified base for Unity `PropertyDrawer`-based extension rendering
+* Simplifies working with ElysiumDB extension system inside Unity Editor
+* Gives reusable helpers for extension lifecycle management (add/remove/query)
+* Enables custom IMGUI rendering for DB extensions
+* Provides safe default drawing utilities for serialized properties
+
+---
+
+### Class
+
+```csharp
+public abstract class ExtensionDrawer : PropertyDrawer
+```
+
+Base abstract drawer used for rendering and managing ElysiumDB extensions inside Unity Editor inspector GUI.
+
+It acts as a bridge between Unity `PropertyDrawer` system and the `ElysiumDatabase` extension API, providing helper methods to query, add, remove, and render extensions consistently.
+
+---
+
+## Fields
+
+<table>
+<tr>
+<th>Field</th>
+<th>Declaration</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<td colspan="3"><em>None</em></td>
+</tr>
+</table>
+
+---
+
+## Properties
+
+<table>
+<tr>
+<th>Property</th>
+<th>Declaration</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<a id="ModuDevCore.ElysiumDB.Editor.ExtensionDrawer.Settings"></a>
+<td><code>Settings</code></td>
+<td>
+
+```csharp
+protected ElysiumDBSettings Settings { get; }
+```
+
+</td>
+<td>Provides access to global ElysiumDB settings from <code>ElysiumDatabase.Settings</code>.</td>
+</tr>
+</table>
+
+---
+
+## Methods
+
+<table>
+<tr>
+<th>Method</th>
+<th>Declaration</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<a id="ModuDevCore.ElysiumDB.Editor.ExtensionDrawer.GetExtension"></a>
+<td><code>GetExtension&lt;T&gt;</code></td>
+<td>
+
+```csharp
+public T GetExtension<T>() where T : class
+```
+
+</td>
+<td>Retrieves a single extension instance of type <code>T</code> from the ElysiumDatabase.</td>
+</tr>
+
+<tr>
+<a id="ModuDevCore.ElysiumDB.Editor.ExtensionDrawer.GetExtensions"></a>
+<td><code>GetExtensions&lt;T&gt;</code></td>
+<td>
+
+```csharp
+public T[] GetExtensions<T>() where T : class
+```
+
+</td>
+<td>Retrieves all registered extensions of type <code>T</code> from the ElysiumDatabase.</td>
+</tr>
+
+<tr>
+<a id="ModuDevCore.ElysiumDB.Editor.ExtensionDrawer.TryGetExtensions"></a>
+<td><code>TryGetExtensions&lt;T&gt;</code></td>
+<td>
+
+```csharp
+public bool TryGetExtensions<T>(out T[] extensions) where T : class
+```
+
+</td>
+<td>Attempts to retrieve all extensions of type <code>T</code>. Returns <code>true</code> if at least one extension exists.</td>
+</tr>
+
+<tr>
+<a id="ModuDevCore.ElysiumDB.Editor.ExtensionDrawer.HasExtension"></a>
+<td><code>HasExtension&lt;T&gt;</code></td>
+<td>
+
+```csharp
+public bool HasExtension<T>() where T : class
+```
+
+</td>
+<td>Checks whether an extension of type <code>T</code> exists in the database.</td>
+</tr>
+
+<tr>
+<a id="ModuDevCore.ElysiumDB.Editor.ExtensionDrawer.AddExtension"></a>
+<td><code>AddExtension&lt;T&gt;</code></td>
+<td>
+
+```csharp
+public T AddExtension<T>() where T : DBExtensionBase, new()
+```
+
+</td>
+<td>Adds and registers a new extension of type <code>T</code> into the ElysiumDatabase.</td>
+</tr>
+
+<tr>
+<a id="ModuDevCore.ElysiumDB.Editor.ExtensionDrawer.RemoveExtension"></a>
+<td><code>RemoveExtension&lt;T&gt;</code></td>
+<td>
+
+```csharp
+public bool RemoveExtension<T>() where T : DBExtensionBase, new()
+```
+
+</td>
+<td>Removes an extension of type <code>T</code> from the ElysiumDatabase if it exists.</td>
+</tr>
+
+<tr>
+<a id="ModuDevCore.ElysiumDB.Editor.ExtensionDrawer.OnGUI"></a>
+<td><code>OnGUI</code></td>
+<td>
+
+```csharp
+protected sealed override void OnGUI(
+    Rect position,
+    SerializedProperty property,
+    GUIContent label)
+```
+
+</td>
+<td>Unity IMGUI entry point for drawing the property. Wraps drawing with <code>EditorGUI.BeginProperty</code> / <code>EndProperty</code> and delegates rendering to <code>OnExtensionGUI</code>.</td>
+</tr>
+
+<tr>
+<a id="ModuDevCore.ElysiumDB.Editor.ExtensionDrawer.GetPropertyHeight"></a>
+<td><code>GetPropertyHeight</code></td>
+<td>
+
+```csharp
+protected sealed override float GetPropertyHeight(
+    SerializedProperty property,
+    GUIContent label)
+```
+
+</td>
+<td>Returns the height of the property drawer by delegating to <code>GetExtensionHeight</code>.</td>
+</tr>
+
+<tr>
+<a id="ModuDevCore.ElysiumDB.Editor.ExtensionDrawer.DrawDefaultExtension"></a>
+<td><code>DrawDefaultExtension</code></td>
+<td>
+
+```csharp
+public void DrawDefaultExtension(
+    Rect position,
+    SerializedProperty property)
+```
+
+</td>
+<td>Draws all visible serialized child properties using Unity default IMGUI rendering logic.</td>
+</tr>
+
+<tr>
+<a id="ModuDevCore.ElysiumDB.Editor.ExtensionDrawer.GetChildrenHeight"></a>
+<td><code>GetChildrenHeight</code></td>
+<td>
+
+```csharp
+public float GetChildrenHeight(
+    SerializedProperty property)
+```
+
+</td>
+<td>Calculates total height of all visible serialized child properties including spacing.</td>
+</tr>
+
+<tr>
+<td colspan="3"><em>None</em></td>
+</tr>
+</table>
+
+---
+
+## Enum
+
+<table>
+<tr>
+<th>Enum</th>
+<th>Values</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<td colspan="3"><em>None</em></td>
+</tr>
+</table>
+
+---
+
+## Nested Classes
+
+<table>
+<tr>
+<th>Class</th>
+<th>Declaration</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<td colspan="3"><em>None</em></td>
+</tr>
+</table>

@@ -139,6 +139,38 @@ namespace ModuDevCore.ElysiumDB
 
 		    return extension;
 		}
+		public static bool RemoveExtension<T>() where T : DBExtensionBase
+		{
+		    var extension =
+		        Settings.extensions.FirstOrDefault(e => e is T);
+
+		    if (extension == null)
+		    {
+		        Debug.LogWarning($"[ElysiumDB] Extension {typeof(T).Name} not found.");
+		        return false;
+		    }
+
+		    try
+		    {
+		        extension.Process(ExtensionEvent.Dispose, Instance);
+		    }
+		    catch (Exception e)
+		    {
+		        Debug.LogError(
+		            $"[ElysiumDB] Error disposing extension {typeof(T).Name}: {e}");
+		    }
+
+		    Settings.extensions.Remove(extension);
+
+		#if UNITY_EDITOR
+		    UnityEditor.EditorUtility.SetDirty(Settings);
+		    UnityEditor.AssetDatabase.SaveAssets();
+		#endif
+
+		    Debug.Log($"[ElysiumDB] Extension removed: {typeof(T).Name}");
+
+		    return true;
+		}
 		public static List<Type> GetRequiresExtensions(Type extensionType)
 		{
 		    if (Settings.extensions == null || Settings.extensions.Count == 0)

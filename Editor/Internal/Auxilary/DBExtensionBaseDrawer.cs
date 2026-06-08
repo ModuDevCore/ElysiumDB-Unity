@@ -11,17 +11,14 @@ namespace ModuDevCore.ElysiumDB.Editor.Internal {
         {
             EditorGUI.BeginProperty(position, label, property);
 
-            // Проверяем, находится ли свойство внутри List/Array
             bool isArrayElement = property.propertyPath.Contains(".Array.data[");
 
             if (isArrayElement)
             {
-                // === ВНУТРИ СПИСКА: рисуем БЕЗ любого заголовка ===
                 DrawChildrenWithoutHeader(position, property);
             }
             else
             {
-                // === Обычное поле (не в списке) ===
                 EditorGUI.PropertyField(position, property, label, true);
             }
 
@@ -84,7 +81,7 @@ namespace ModuDevCore.ElysiumDB.Editor.Internal {
                 enterChildren = false;
             }
 
-            return totalHeight - EditorGUIUtility.standardVerticalSpacing; // убираем лишний отступ в конце
+            return totalHeight - EditorGUIUtility.standardVerticalSpacing;
         }
     }
 }

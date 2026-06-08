@@ -724,3 +724,213 @@ public static T AddExtension<T>() where T : DBExtensionBase, new()
 ## Enumerations
 
 **None** — there are currently no public enumerations in this version of the API.
+
+<a id="ModuDevCore.ElysiumDB.Editor.ExtensionDrawer"></a>
+
+## ModuDevCore.ElysiumDB.Editor.ExtensionDrawer
+
+### Opportunities
+
+* Unified base drawer for ElysiumDB extension rendering in Unity Editor
+* Simplifies extension access layer from IMGUI PropertyDrawer context
+* Provides reusable GUI utilities for serialized Unity properties
+* Reduces boilerplate when implementing custom extension inspectors
+* Standardizes extension management (add/remove/query) from editor UI
+
+---
+
+### Class
+
+```csharp
+public abstract class ExtensionDrawer : PropertyDrawer
+```
+
+Abstract Unity `PropertyDrawer` base class for rendering and managing ElysiumDB extensions inside the Unity Editor.
+Provides a unified API layer for accessing `ElysiumDatabase` extensions and building custom IMGUI-based inspectors.
+
+---
+
+## Fields
+
+<table>
+<tr>
+<th>Field</th>
+<th>Declaration</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<td colspan="3"><em>None</em></td>
+</tr>
+</table>
+
+---
+
+## Properties
+
+<table>
+<tr>
+<th>Property</th>
+<th>Declaration</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<td colspan="3"><em>None</em></td>
+</tr>
+</table>
+
+---
+
+## Methods
+
+<table>
+<tr>
+<th>Method</th>
+<th>Declaration</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<a id="ModuDevCore.ElysiumDB.Editor.ExtensionDrawer.GetExtension"></a>
+<td><code>GetExtension&lt;T&gt;</code></td>
+<td>
+
+```csharp
+public T GetExtension<T>() where T : class
+```
+
+</td>
+<td>Retrieves a single extension instance of type <code>T</code> from the ElysiumDatabase.</td>
+</tr>
+
+<tr>
+<a id="ModuDevCore.ElysiumDB.Editor.ExtensionDrawer.GetExtensions"></a>
+<td><code>GetExtensions&lt;T&gt;</code></td>
+<td>
+
+```csharp
+public T[] GetExtensions<T>() where T : class
+```
+
+</td>
+<td>Retrieves all registered extensions of type <code>T</code> from the ElysiumDatabase.</td>
+</tr>
+
+<tr>
+<a id="ModuDevCore.ElysiumDB.Editor.ExtensionDrawer.TryGetExtensions"></a>
+<td><code>TryGetExtensions&lt;T&gt;</code></td>
+<td>
+
+```csharp
+public bool TryGetExtensions<T>(out T[] extensions) where T : class
+```
+
+</td>
+<td>Attempts to retrieve all extensions of type <code>T</code>. Returns <code>true</code> if at least one extension exists.</td>
+</tr>
+
+<tr>
+<a id="ModuDevCore.ElysiumDB.Editor.ExtensionDrawer.HasExtension"></a>
+<td><code>HasExtension&lt;T&gt;</code></td>
+<td>
+
+```csharp
+public bool HasExtension<T>() where T : class
+```
+
+</td>
+<td>Checks whether an extension of type <code>T</code> exists in the ElysiumDatabase.</td>
+</tr>
+
+<tr>
+<a id="ModuDevCore.ElysiumDB.Editor.ExtensionDrawer.AddExtension"></a>
+<td><code>AddExtension&lt;T&gt;</code></td>
+<td>
+
+```csharp
+public T AddExtension<T>() where T : DBExtensionBase, new()
+```
+
+</td>
+<td>Adds and registers a new extension of type <code>T</code> into the ElysiumDatabase.</td>
+</tr>
+
+<tr>
+<a id="ModuDevCore.ElysiumDB.Editor.ExtensionDrawer.RemoveExtension"></a>
+<td><code>RemoveExtension&lt;T&gt;</code></td>
+<td>
+
+```csharp
+public bool RemoveExtension<T>() where T : DBExtensionBase, new()
+```
+
+</td>
+<td>Removes an extension of type <code>T</code> from the ElysiumDatabase if it exists.</td>
+</tr>
+
+<tr>
+<a id="ModuDevCore.ElysiumDB.Editor.ExtensionDrawer.DrawDefaultExtension"></a>
+<td><code>DrawDefaultExtension</code></td>
+<td>
+
+```csharp
+public void DrawDefaultExtension(
+    Rect position,
+    SerializedProperty property)
+```
+
+</td>
+<td>Draws all visible child serialized properties using Unity’s default IMGUI property rendering.</td>
+</tr>
+
+<tr>
+<a id="ModuDevCore.ElysiumDB.Editor.ExtensionDrawer.GetChildrenHeight"></a>
+<td><code>GetChildrenHeight</code></td>
+<td>
+
+```csharp
+public float GetChildrenHeight(
+    SerializedProperty property)
+```
+
+</td>
+<td>Calculates the total visual height of all child serialized properties including spacing.</td>
+</tr>
+
+<tr>
+<td colspan="3"><em>None</em></td>
+</tr>
+</table>
+
+---
+
+## Enum
+
+<table>
+<tr>
+<th>Enum</th>
+<th>Values</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<td colspan="3"><em>None</em></td>
+</tr>
+</table>
+
+---
+
+## Nested Classes
+
+<table>
+<tr>
+<th>Class</th>
+<th>Declaration</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<td colspan="3"><em>None</em></td>
+</tr>
+</table>
