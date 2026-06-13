@@ -263,6 +263,9 @@ namespace ModuDevCore.ElysiumDB.Editor.Internal
                 SerializedProperty element = property.GetArrayElementAtIndex(i);
                 SerializedProperty groupProp = element.FindPropertyRelative("extensionGroup");
                 
+                if(groupProp?.name == null)
+                    continue;
+
                 string groupPath = groupProp.stringValue?.Trim() ?? "";
                 if (string.IsNullOrEmpty(groupPath)) {
                     // Is extension

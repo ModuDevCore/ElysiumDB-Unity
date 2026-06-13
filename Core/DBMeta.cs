@@ -1,6 +1,9 @@
 using System;
+using System.Linq;
+using System.Collections.Generic;
 using System.Data;
 using System.Runtime.CompilerServices;
+using System.Reflection;
 
 using UnityEngine;
 
@@ -39,7 +42,7 @@ namespace ModuDevCore.ElysiumDB
             connection?.Dispose();
         }
 
-        public IDataReader RunCmd(
+        public IDataReader Query(
             string cmd,
             int linesToRead = 0,
             [CallerMemberName] string callerMethod = "",
@@ -73,6 +76,157 @@ namespace ModuDevCore.ElysiumDB
                 reader.Read();
 
             return reader;
+        }
+        public T QueryFirst<T>(
+            string cmd,
+            int linesToRead = 0,
+            [CallerMemberName] string callerMethod = "",
+            [CallerFilePath] string callerFile = "",
+            [CallerLineNumber] int callerLine = 0
+        ) where T : new()
+        {
+            using IDataReader reader = Query(cmd, linesToRead, callerMethod, callerFile, callerLine);
+
+            if (!reader.Read())
+                return default;
+
+            return MapReaderToObject<T>(reader);
+        }
+        public List<T> QueryList<T>(
+            string cmd,
+            int linesToRead = 0,
+            [CallerMemberName] string callerMethod = "",
+            [CallerFilePath] string callerFile = "",
+            [CallerLineNumber] int callerLine = 0
+        ) where T : new()
+        {
+            List<T> result = new();
+
+            using IDataReader reader = Query(cmd, linesToRead, callerMethod, callerFile, callerLine);
+
+            while (reader.Read())
+            {
+                result.Add(MapReaderToObject<T>(reader));
+            }
+
+            return result;
+        }
+        public List<T> QueryColumn<T>(string cmd)
+        {
+            List<T> result = new();
+
+            using IDataReader reader = Query(cmd);
+
+            while (reader.Read())
+            {
+                object value = reader.GetValue(0);
+
+                if (value == null || value == DBNull.Value)
+                    continue;
+
+                result.Add((T)Convert.ChangeType(value, typeof(T)));
+            }
+
+            return result;
+        }
+        public T QueryValue<T>(
+            string cmd,
+            [CallerMemberName] string callerMethod = "",
+            [CallerFilePath] string callerFile = "",
+            [CallerLineNumber] int callerLine = 0
+        )
+        {
+            using IDataReader reader = Query(cmd, 0, callerMethod, callerFile, callerLine);
+
+            if (!reader.Read())
+                return default;
+
+            object value = reader.IsDBNull(0)
+                ? null
+                : reader.GetValue(0);
+
+            if (value == null)
+                return default;
+
+            return (T)Convert.ChangeType(value, typeof(T));
+        }
+        public Dictionary<TKey, TValue> QueryDictionary<TKey, TValue>(
+            string cmd,
+            [CallerMemberName] string callerMethod = "",
+            [CallerFilePath] string callerFile = "",
+            [CallerLineNumber] int callerLine = 0
+        )
+        {
+            Dictionary<TKey, TValue> result = new();
+
+            using IDataReader reader = Query(cmd, 0, callerMethod, callerFile, callerLine);
+
+            while (reader.Read())
+            {
+                TKey key = (TKey)Convert.ChangeType(reader.GetValue(0), typeof(TKey));
+                TValue value = (TValue)Convert.ChangeType(reader.GetValue(1), typeof(TValue));
+
+                result[key] = value;
+            }
+
+            return result;
+        }
+        public void Execute(string cmd)
+        {
+            using var dbcmd = connection.CreateCommand();
+            dbcmd.CommandText = cmd;
+            dbcmd.ExecuteNonQuery();
+        }
+        public bool Exists(string cmd)
+        {
+            using IDataReader reader = Query(cmd);
+            return reader.Read();
+        }
+        private static T MapReaderToObject<T>(IDataReader reader)
+            where T : new()
+        {
+            T item = new();
+
+            var properties = typeof(T)
+                .GetProperties(BindingFlags.Public |
+                               BindingFlags.Instance);
+
+            for (int i = 0; i < reader.FieldCount; i++)
+            {
+                string columnName = reader.GetName(i);
+
+                var property = properties.FirstOrDefault(p =>
+                    string.Equals(
+                        p.Name,
+                        columnName,
+                        StringComparison.OrdinalIgnoreCase));
+
+                if (property == null || !property.CanWrite)
+                    continue;
+
+                object value = reader.IsDBNull(i)
+                    ? null
+                    : reader.GetValue(i);
+
+                try
+                {
+                    if (value != null)
+                    {
+                        Type targetType =
+                            Nullable.GetUnderlyingType(property.PropertyType)
+                            ?? property.PropertyType;
+
+                        value = Convert.ChangeType(value, targetType);
+                    }
+
+                    property.SetValue(item, value);
+                }
+                catch
+                {
+                }
+            }
+
+            return item;
         }
     }
 }

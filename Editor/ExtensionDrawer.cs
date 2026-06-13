@@ -10,6 +10,8 @@ namespace ModuDevCore.ElysiumDB.Editor {
         protected ElysiumDBSettings Settings =>
             ElysiumDatabase.Settings;
 
+        public object target = null;
+
         public T GetExtension<T>() where T : class
                 => ElysiumDatabase.GetExtension<T>();
         public T[] GetExtensions<T>() where T : class
@@ -35,6 +37,8 @@ namespace ModuDevCore.ElysiumDB.Editor {
 
             bool isArrayElement =
                 property.propertyPath.Contains(".Array.data[");
+
+            target = property.boxedValue;
 
             OnExtensionGUI(position, property, label);
 

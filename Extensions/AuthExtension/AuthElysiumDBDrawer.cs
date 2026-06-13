@@ -5,8 +5,12 @@ using ModuDevCore.ElysiumDB;
 [CustomPropertyDrawer(typeof(AuthElysiumDB))]
 public class AuthElysiumDBDrawer : PropertyDrawer
 {
+    bool showCredentials = false;
+    public float height = 0;
+
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
     {
+        height = 0;
         EditorGUI.BeginProperty(position, label, property);
 
         float y = position.y;
@@ -33,19 +37,24 @@ public class AuthElysiumDBDrawer : PropertyDrawer
 
         EditorGUI.LabelField(rect, "Is Authenticated", auth.IsAuthenticated ? "✅ Yes" : "❌ No");
         rect.y += EditorGUIUtility.singleLineHeight + 2;
-
-        string jwt = auth.GetJWT();
-        string jwtShort = string.IsNullOrEmpty(jwt) 
-            ? "— None —" 
-            : (jwt.Length > 40 ? jwt.Substring(0, 37) + "..." : jwt);
-
-        EditorGUI.LabelField(rect, "JWT Token", jwtShort);
+        
+        Rect foldoutRect = new Rect(rect.x, rect.y, rect.width, EditorGUIUtility.singleLineHeight);
+        showCredentials = EditorGUI.Foldout(foldoutRect, showCredentials, "Credentials", true);
+        
         rect.y += EditorGUIUtility.singleLineHeight + 2;
+        height += EditorGUIUtility.singleLineHeight + 2;
 
-        if (!string.IsNullOrEmpty(jwt))
+        if (showCredentials)
         {
-            EditorGUI.LabelField(rect, "Token Length", $"{jwt.Length} characters");
-            rect.y += EditorGUIUtility.singleLineHeight + 4;
+            string credentials = string.IsNullOrEmpty(auth.GetCredentials()) 
+                ? "— None —" 
+                : auth.GetCredentials();
+
+            rect.height = EditorStyles.textArea.CalcHeight(new GUIContent(credentials), rect.width);
+            rect.height += EditorGUIUtility.singleLineHeight;
+            EditorGUI.LabelField(rect, credentials, EditorStyles.textArea);
+            rect.y += rect.height;
+            height += rect.height;
         }
 
         // Кнопки
@@ -75,7 +84,6 @@ public class AuthElysiumDBDrawer : PropertyDrawer
     public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
     {
         float totalHeight = EditorGUIUtility.singleLineHeight;
-        totalHeight += 8;
 
         // Получаем высоту всех children (внутренних полей)
         SerializedProperty iterator = property.Copy();
@@ -97,9 +105,6 @@ public class AuthElysiumDBDrawer : PropertyDrawer
             totalHeight += EditorGUI.GetPropertyHeight(iterator, null, true) + 2;
         }
 
-        // Добавляем высоту нашей кастомной информации
-        totalHeight += EditorGUIUtility.singleLineHeight * 4;  
-
-        return totalHeight;
+        return totalHeight + height;
     }
 }
