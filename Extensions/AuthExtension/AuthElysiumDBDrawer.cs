@@ -1,4 +1,3 @@
-#if UNITY_EDITOR
 using UnityEngine;
 using UnityEditor;
 using ModuDevCore.ElysiumDB;
@@ -109,4 +108,3 @@ public class AuthElysiumDBDrawer : PropertyDrawer
         return totalHeight + height;
     }
 }
-#endif
