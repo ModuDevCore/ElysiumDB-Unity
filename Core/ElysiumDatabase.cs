@@ -8,7 +8,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEditor;
 
-using LiteSQLCustom;
+using Mono.Data.Sqlite;
 
 namespace ModuDevCore.ElysiumDB 
 {
@@ -333,7 +333,7 @@ namespace ModuDevCore.ElysiumDB
             var bytes = LoadFileBytes(filePath);
             if (bytes != null) EnsureFileExists(destPath, bytes);
 
-            var conn = new SqliteConnectionNative {
+            var conn = new SqliteConnection {
                 ConnectionString = destPath
             };
             try {
