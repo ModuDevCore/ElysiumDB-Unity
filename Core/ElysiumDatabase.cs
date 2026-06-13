@@ -187,7 +187,9 @@ namespace ModuDevCore.ElysiumDB
 
 		    if (!Settings.extensions.Any(e => e?.GetType() == type))
 		    {
+		    	#if UNITY_EDITOR
 		        EditorUtility.SetDirty(Settings);
+		    	#endif
 		    }
 
 		    Debug.Log($"[ElysiumDB] Extension added: {type.Name}");
@@ -365,11 +367,13 @@ namespace ModuDevCore.ElysiumDB
 
         #endregion
 
+        #if UNITY_EDITOR
         [MenuItem("ElysiumDB/Settings")]
         public static void OpenSettings()
         {
             EditorUtility.OpenPropertyEditor(Settings);
         }
+        #endif
 
         // ==================== ОСНОВНОЕ: Очистка ====================
         public void Dispose()
