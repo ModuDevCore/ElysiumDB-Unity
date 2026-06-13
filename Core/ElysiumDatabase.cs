@@ -32,6 +32,32 @@ namespace ModuDevCore.ElysiumDB
                 ? $"/data/data/{Application.identifier}"
                 : Application.persistentDataPath;
 
+		public DBMeta this[string database]
+		{
+		    get => Connections[database];
+		}
+
+        private readonly Queue<(string message, LogType type, int frame)> _logQueue = new Queue<(string, LogType, int)>();
+		private bool _loggingInitialized = false;
+
+		public static void Log(string message) => Instance?.EnqueueLog(message, LogType.Log);
+		public static void LogWarning(string message) => Instance?.EnqueueLog(message, LogType.Warning);
+		public static void LogError(string message) => Instance?.EnqueueLog(message, LogType.Error);
+
+		private void EnqueueLog(string message, LogType type = LogType.Log)
+		{
+		    if (string.IsNullOrEmpty(message)) return;
+
+		    var entry = (message, type, Time.frameCount);
+		    _logQueue.Enqueue(entry);
+
+		    // Если ещё не запущен обработчик — запускаем
+		    if (!_loggingInitialized)
+		    {
+		        _loggingInitialized = true;
+		        UnityEngine.Application.quitting += () => _logQueue.Clear();
+		    }
+		}
 
         // ==================== Extensions ====================
 
@@ -83,6 +109,7 @@ namespace ModuDevCore.ElysiumDB
 		        Debug.LogError($"[ElysiumDB] Error in extension {extension.GetType().Name} during {evt}: {e}");
 		    }
 		}
+
 		public static T GetExtension<T>() where T : class
 		    => GetExtensions<T>().FirstOrDefault();
 		public static T[] GetExtensions<T>() where T : class
@@ -291,6 +318,7 @@ namespace ModuDevCore.ElysiumDB
             }
 
             Instance = this;
+
         }
         public void DetachDB(string path) {
             Connections[path].Dispose();

@@ -24,6 +24,7 @@ namespace ModuDevCore.ElysiumDB.Editor.Internal
             string[] movedFrom)
         {
             if (_isProcessing)
+            
                 return;
 
             if (!IsRelevant(imported, deleted, moved))
@@ -80,6 +81,8 @@ namespace ModuDevCore.ElysiumDB.Editor.Internal
         public static void SafetyFixExtensions() {
             ElysiumDBSettings Settings = ElysiumDatabase.Settings;
 
+            Settings.extensions.RemoveAll(x => x == null);
+
             ElysiumDatabase.ProcessRequiredExtensions();
             var extensions = Settings.extensions;
 			if (extensions == null || extensions.Count == 0) return;
@@ -87,14 +90,11 @@ namespace ModuDevCore.ElysiumDB.Editor.Internal
 			var frequency = new Dictionary<int, int>();
 			foreach (var ext in extensions)
 			{
-			    if (ext != null)
-			    {
-			        int id = ext.extensionId;
-			        if (id <= 0)
-			            frequency[id] = 99999;
-			        else
-			            frequency[id] = frequency.TryGetValue(id, out int c) ? c + 1 : 1;
-			    }
+		        int id = ext.extensionId;
+		        if (id <= 0)
+		            frequency[id] = 99999;
+		        else
+		            frequency[id] = frequency.TryGetValue(id, out int c) ? c + 1 : 1;
 			}
 
 			var safeIds = new HashSet<int>(

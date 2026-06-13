@@ -8,7 +8,7 @@ namespace ModuDevCore.ElysiumDB.Extension
 	using Core;	
 	using Internal.Data;	
 	[Serializable]
-    public abstract class DBExtensionBase
+    public class DBExtensionBase
     {
     	[HideInInspector]
     	public bool enabled = true;

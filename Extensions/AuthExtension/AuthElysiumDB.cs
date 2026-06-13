@@ -6,8 +6,8 @@ using ModuDevCore.ElysiumDB.Extension;
 
 public class AuthElysiumDB : DBExtensionBase
 {
+    public string cacheFileName = "elysium_session.cache";
     public bool IsAuthenticated { get; private set; }
-    public string CurrentJWT { get; private set; }
 
     private IAuthElysiumReceiver[] _receivers => GetExtensions<IAuthElysiumReceiver>();
 
@@ -20,12 +20,15 @@ public class AuthElysiumDB : DBExtensionBase
     {
     }
 
-    public void Auth(string newJwt) {
-        PlayerPrefs.SetString("ElysiumSession", newJwt);
-        NotifyAuthTokenUpdated(newJwt);
+    public void Auth(string сredentials) {
+        PlayerPrefs.SetString(cacheFileName, сredentials);
+        NotifyAuthTokenUpdated(сredentials);
     }
-    public string GetJWT() {
-        return PlayerPrefs.GetString("ElysiumSession");
+    public void SignOut() {
+        PlayerPrefs.DeleteKey(cacheFileName);
+    }
+    public string GetCredentials() {
+        return PlayerPrefs.GetString(cacheFileName);
     }
 
     void NotifyAuthTokenUpdated(string newJwt) {
