@@ -1,68 +1,91 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/ModuDevCore/about/main/Images/Baner.gif" width="800" alt="Организация" />
+  <img src="https://raw.githubusercontent.com/ModuDevCore/about/main/Images/Baner.gif" width="800" alt="Organization" />
 </p>
 
 Practical step-by-step guide for working with the library.
 This section contains the most important usage scenarios with code examples and illustrations.
 
 ---
+## See Also
+- [Full Reference Documentation](./REFERENCE.md) — detailed description of all classes and methods
+- [Technical Documentation](./TECHNICAL.md) — internal architecture and extensibility
+- [README](./README.md) — general project information
 
-## Содержание
+---
+## Table of Contents
+- [1. Installation](#1-installation)
+- [2. Initial Setup](#2-initial-setup)
+- [3. Basic Usage Scenarios](#3-basic-usage-scenarios)
+- [4. Useful Examples](#4-useful-examples)
+- [5. Best Practices](#5-best-practices)
+- [See Also](#see-also)
+---
 
-- [1. Установка](#1-установка)
-- [2. Первоначальная настройка](#2-первоначальная-настройка)
-- [3. Основные сценарии использования](#3-основные-сценарии-использования)
-- [4. Полезные примеры](#4-полезные-примеры)
-- [5. Лучшие практики](#5-лучшие-практики)
-- [См. также](#см-также)
+<a id="1-installation"></a>
+## 1. Installation
+
+**Option A — OpenUPM (recommended)**
+
+```bash
+openupm add com.modudevcore.elysiumdb
+```
+
+**Option B — Git URL (UPM)**
+In Unity:
+`Window → Package Manager → + → Add package from git URL`
+
+```text
+https://github.com/ModuDevCore/ElysiumDB.git
+```
+
+**Option C — .unitypackage**
+Download the latest release and import the `.unitypackage` into Unity.
 
 ---
 
-## 1. Установка
-
-### Через NuGet Package Manager
-
-```bash
-Install-Package YourPackageName
-```
-
-### Через .NET CLI
-
-```bash
-dotnet add package YourPackageName
-```
-
-![Установка пакета](../images/install-nuget.png)
-
----
-
-## 2. Первоначальная настройка
-
+<a id="2-initial-setup"></a>
+## 2. Initial Setup
 ```csharp
-using YourNamespace;
+using ModuDevCore.ElysiumDB;
+using UnityEngine;
 
-var config = new LibraryConfiguration
+public class ExampleUsage : MonoBehaviour
 {
-    ApiKey = "your-key",
-    Timeout = TimeSpan.FromSeconds(30),
-    // другие параметры
-};
+    private ElysiumDatabase _db;
 
-var client = new MainService(config);
+    private async void Awake()
+    {
+        _db = new ElysiumDatabase();
+        _db.New(); // initialize system and connections
+    }
+
+    private async void Start()
+    {
+        var connection = _db.Connections["main"];
+
+        var reader = connection.RunCmd("SELECT * FROM Players");
+
+        while (reader.Read())
+        {
+            Debug.Log(reader[0]);
+        }
+    }
+}
 ```
 
-**Описание:**  
-Краткое объяснение, что происходит при инициализации...
+**Description:**  
+Brief explanation of what happens during initialization...
 
-![Схема инициализации](../images/initialization-flow.png)
+![Initialization Flow Diagram](./Images/initialization-flow.png)
 
 ---
 
-## 3. Основные сценарии использования
+<a id="3-basic-usage-scenarios"></a>
+## 3. Basic Usage Scenarios
 
-### 3.1 Создание кастомного модуля/расширения для ElysiumDB
+### 3.1 Creating a Custom Module/Extension for ElysiumDB
 
-Создайте два файла в любом месте в папке проекта:
+Create two files anywhere in your project folder:
 
 ### DBCustomExtension1.cs
 ```csharp
@@ -74,15 +97,15 @@ public class DBCustomExtension1 : DBExtensionBase
 {
     public string initializeText = "Hello world!";
 
-
     protected override void OnInitialize(ElysiumDatabase elysium)
     {
         Debug.Log(initializeText);
     }
 
-    protected override void OnDispose() {}
+    protected override void OnDispose() { }
 
-    public void PrintHelloFromSecondExtension() {
+    public void PrintHelloFromSecondExtension()
+    {
         GetExtension<DBCustomExtension2>().Hello();
     }
 }
@@ -107,31 +130,28 @@ public class DBCustomExtension2 : DBExtensionBase
     {
     }
 
-    public void Hello() {
-      Debug.Log(hello);
+    public void Hello()
+    {
+        Debug.Log(hello);
     }
 }
 ```
 
-После откройте ElysiumDB -> Settings.
+Then open **ElysiumDB → Settings**.
 
-![Вкладка](../images/example-scenario-1.png)
+![elysiumdb-inspector](./Images/elysiumdb-inspector.png)
 
-Затем нажмите на кнопку Add чтобы добавить новый Extension и из списка выберите два модуля DBCustomExtension1 и DBCustomExtension2.
-В конце у Вас в спике Extensions должно появиться два модуля.
+Click the **Add** button to add a new Extension and select **DBCustomExtension1** and **DBCustomExtension2** from the list.
 
-![GIF видео того как добавлять модули и то как они отобразились в инспекторе](../images/example-scenario-1.png)
+At the end, you should see two modules in the Extensions list.
 
-**Результат выполнения:**
-
-![Схема которая показывает функционал](../images/example-scenario-1.png)
+![elysiumdb-extensions](./Images/elysiumdb-extensions.png)
 
 ---
 
-### 3.2 RequireExtensionAttribute
+### 3.2 [RequireExtensionAttribute](./REFERENCE.md#ModuDevCore.ElysiumDB.Attributes.RequireExtensionAttribute)
 
-
-Создайте два файла в любом месте в папке проекта:
+Create two files anywhere in your project folder:
 
 ### DBCustomExtension1.cs
 ```csharp
@@ -144,15 +164,15 @@ public class DBCustomExtension1 : DBExtensionBase
 {
     public string initializeText = "Hello world!";
 
-
     protected override void OnInitialize(ElysiumDatabase elysium)
     {
         Debug.Log(initializeText);
     }
 
-    protected override void OnDispose() {}
+    protected override void OnDispose() { }
 
-    public void PrintHelloFromSecondExtension() {
+    public void PrintHelloFromSecondExtension()
+    {
         GetExtension<DBCustomExtension2>().Hello();
     }
 }
@@ -177,78 +197,85 @@ public class DBCustomExtension2 : DBExtensionBase
     {
     }
 
-    public void Hello() {
-      Debug.Log(hello);
+    public void Hello()
+    {
+        Debug.Log(hello);
     }
 }
 ```
 
-После откройте ElysiumDB -> Settings.
+Then open **ElysiumDB → Settings**.
 
-![Вкладка](../images/example-scenario-1.png)
+Click the **Add** button to add a new Extension and select **DBCustomExtension1** from the list.
+![elysiumdb-extensions](./Images/elysiumdb-extensions.png)
 
-Затем нажмите на кнопку Add чтобы добавить новый Extension и из списка выберите модуль DBCustomExtension1.
-В конце у Вас в спике Extensions должно появиться два модуля ( Или если [RequireExtensionAttribute(typeof(DBCustomExtension2), false)] - предупреждение ).
+At the end, you should see two modules in the Extensions list (or a warning if you used `[RequireExtensionAttribute(typeof(DBCustomExtension2), false)]`).
 
-![GIF видео того как добавлять модули и то как они отобразились в инспекторе](../images/example-scenario-1.png)
 
-**Результат выполнения:**
+![requireextensionattribute-adding-new-flow](./Images/requireextensionattribute-adding-new-flow.png)
 
-![Схема которая показывает функционал](../images/example-scenario-1.png)
+![requireextensionattribute-remove-flow](./Images/requireextensionattribute-remove-flow.png)
 
 ---
 
-## 4. Полезные примеры
+<a id="4-useful-examples"></a>
+## 4. Useful Examples
 
-### Пример 1: Полный рабочий кейс
-
+### Example 1: Complete Working Case
 ```csharp
-// Полный пример с комментариями
+using UnityEngine;
+using ModuDevCore.ElysiumDB;
+using ModuDevCore.ElysiumDB.Extension;
+
+[DefaultExtensionGroupAttribute("Custom/DBCustomExtension")]
+[ExtensionProcessOrderAttribute(nameof(DBCustomExtension1), 0)]
+[RequireExtensionAttribute(typeof(DBCustomExtension2))]
+public class DBCustomExtension1 : DBExtensionBase
+{
+    public string initializeText = "Hello world!";
+
+    protected override void OnInitialize(ElysiumDatabase elysium)
+    {
+        Debug.Log(initializeText);
+    }
+
+    protected override void OnDispose() { }
+
+    public void PrintHelloFromSecondExtension()
+    {
+        GetExtension<DBCustomExtension2>().Hello();
+    }
+}
+
+[ExtensionProcessOrderAttribute(nameof(DBCustomExtension1), 1)]
+[DefaultExtensionGroupAttribute("Custom/DBCustomExtension")]
+public class DBCustomExtension2 : DBExtensionBase
+{
+    public string hello = "Hello World from second extension!";
+
+    protected override void OnInitialize(ElysiumDatabase elysium)
+    {
+        
+    }
+
+    protected override void OnDispose()
+    {
+    }
+
+    public void Hello()
+    {
+        Debug.Log(hello);
+    }
+}
 ```
 
-**Ожидаемый результат:**
-
-![Результат примера](../images/full-example-result.png)
-
----
-
-### Пример 2: ...
+**Expected Result:**  
+![Example Result](./Images/defaultextensiongroupattribute.png)
 
 ---
 
-## 5. Лучшие практики
-
-- Создавайте кастомные модули в редких случаях, если Вам нужно расширить функционал модуля используйте наследование классов.
-- Резделяйте модули по группам, чтобы не было путаницы.
-- Не стесняйтесь добавлять несколько модулей одного и того же класса, но добавляйте им поля чтобы можно было их различить.
-
----
-
-## См. также
-
-- [Полная справочная документация](./REFERENCE.md) — подробное описание всех классов и методов
-- [Техническая документация](./TECHNICAL.md) — внутренняя архитектура и расширяемость
-- [README](../README.md) — общая информация о проекте
-
-<!-- 
-    =============================================
-    ИНСТРУКЦИЯ ДЛЯ РАЗРАБОТЧИКОВ ДОКУМЕНТАЦИИ
-    =============================================
-
-    1. Tutorial.md предназначен для пользователей. 
-       Используйте простой и понятный язык.
-    
-    2. Каждый важный сценарий должен содержать:
-       - Описание задачи
-       - Пример кода
-       - Изображение (результат или процесс)
-       - Краткое пояснение
-    
-    3. Изображения размещайте в папке ../images/
-    
-    4. Старайтесь показывать реальные практические примеры,
-       а не только синтаксис (это для REFERENCE.md).
-    
-    5. При добавлении новых разделов обязательно обновляйте 
-       оглавление и добавляйте якорь через <a id="..."></a>
--->
+<a id="5-useful-examples"></a>
+## 5. Best Practices
+- Create custom modules only in rare cases. If you need to extend functionality, use class inheritance.
+- Group modules by categories to avoid confusion.
+- Feel free to add multiple modules of the same class, but give them distinct fields so they can be differentiated.

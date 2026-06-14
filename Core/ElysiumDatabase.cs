@@ -171,6 +171,24 @@ namespace ModuDevCore.ElysiumDB
 		    if (!typeof(DBExtensionBase).IsAssignableFrom(type))
 		        throw new ArgumentException($"Type {type.Name} must inherit from DBExtensionBase");
 
+		    var requiredAttributes = (RequireExtensionAttribute[])
+		        type.GetCustomAttributes(typeof(RequireExtensionAttribute), true);
+
+		    foreach (var attr in requiredAttributes)
+		    {
+		    	if(attr.AutoCreate)
+		    		continue;
+		        bool hasRequired = Settings.extensions.Any(ext =>
+		            ext != null && attr.ExtensionType.IsAssignableFrom(ext.GetType()));
+
+		        if (!hasRequired)
+		        {
+		            throw new InvalidOperationException(
+		                $"Cannot add extension {type.Name} because it requires " +
+		                $"{attr.ExtensionType.Name}, but it is not present in the extensions list.");
+		        }
+		    }
+
 		    var extension = (DBExtensionBase)Activator.CreateInstance(type);
 
 		    var defaultExtensionGroupAttribute = type.GetCustomAttribute<DefaultExtensionGroupAttribute>();
@@ -185,14 +203,14 @@ namespace ModuDevCore.ElysiumDB
 		    if (context != null)
 		        context.SafeProcess(extension, ExtensionEvent.Initialize);
 
-		    if (!Settings.extensions.Any(e => e?.GetType() == type))
-		    {
-		    	#if UNITY_EDITOR
-		        EditorUtility.SetDirty(Settings);
-		    	#endif
-		    }
+		#if UNITY_EDITOR
+		    EditorUtility.SetDirty(Settings);
+		#endif
 
 		    Debug.Log($"[ElysiumDB] Extension added: {type.Name}");
+
+		    ProcessRequiredExtensions();
+
 		    return extension;
 		}
 
@@ -207,6 +225,17 @@ namespace ModuDevCore.ElysiumDB
 		        Debug.LogWarning($"[ElysiumDB] Extension {type.Name} not found.");
 		        return false;
 		    }
+
+			List<Type> dependents = GetRequiresExtensions(type);
+
+            if (dependents != null && dependents.Count > 0 && Settings.extensions.Where(ext => ext != null && ext.GetType() == type).ToArray().Length == 1)
+            {
+            	string dependentNames = string.Join(", ",
+                            dependents.Select(t => t.Name));
+		        Debug.LogError($"[ElysiumDB] Cannot Remove Extension\n" + 
+                            $"This extension is required by:\n\n{dependentNames}");
+		        return false;
+            }
 
 		    try
 		    {
@@ -254,53 +283,63 @@ namespace ModuDevCore.ElysiumDB
 		}
 		public static void ProcessRequiredExtensions()
 		{
-		    var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+		    if (Settings.extensions == null) return;
+		    
+		    var currentExtensions = Settings.extensions.ToList();
 
-		    foreach (var ext in Settings.extensions)
+		    foreach (var ext in currentExtensions)
 		    {
+		        if (ext == null) continue;
+
 		        Type type = ext.GetType();
+		        var attributes = (RequireExtensionAttribute[])
+		            type.GetCustomAttributes(typeof(RequireExtensionAttribute), true);
 
-	            var attributes =
-	                (RequireExtensionAttribute[])
-	                type.GetCustomAttributes(typeof(RequireExtensionAttribute), true);
+		        foreach (var attribute in attributes)
+		        {
+		            if (!typeof(DBExtensionBase).IsAssignableFrom(attribute.ExtensionType))
+		            {
+		                Debug.LogError($"[ElysiumDB] {attribute.ExtensionType.Name} is not a DBExtensionBase.");
+		                continue;
+		            }
 
-	            foreach (var attribute in attributes)
-	            {
-	                if (!typeof(DBExtensionBase).IsAssignableFrom(attribute.ExtensionType))
-	                {
-	                    Debug.LogError(
-	                        $"[ElysiumDB] {attribute.ExtensionType.Name} is not DBExtensionBase.");
-	                    continue;
-	                }
+		            // Проверяем, есть ли уже такое расширение
+		            bool exists = Settings.extensions.Any(e =>
+		                e != null && e.GetType() == attribute.ExtensionType);
 
-	                bool exists =
-	                    Settings.extensions.Any(e =>
-	                        e != null &&
-	                        e.GetType() == attribute.ExtensionType);
+		            if (exists) continue;
 
-	                if (exists)
-	                    continue;
+		            if (attribute.AutoCreate)
+		            {
+		                try
+		                {
+		                    var extension = (DBExtensionBase)Activator.CreateInstance(attribute.ExtensionType);
+		                    
+		                    // Устанавливаем группу по умолчанию, если есть атрибут
+		                    var groupAttr = attribute.ExtensionType.GetCustomAttribute<DefaultExtensionGroupAttribute>();
+		                    if (groupAttr != null)
+		                    {
+		                        extension.extensionGroup = groupAttr.ExtensionGroup;
+		                    }
 
-	                if (attribute.AutoCreate)
-	                {
-	                    var extension =
-	                        (DBExtensionBase)Activator.CreateInstance(attribute.ExtensionType);
+		                    Settings.extensions.Add(extension);
 
-	                    Settings.extensions.Add(extension);
+		#if UNITY_EDITOR
+		                    UnityEditor.EditorUtility.SetDirty(Settings);
+		#endif
 
-	#if UNITY_EDITOR
-	                    UnityEditor.EditorUtility.SetDirty(Settings);
-	#endif
-
-	                    Debug.Log(
-	                        $"[ElysiumDB] Auto created extension: {attribute.ExtensionType.Name}");
-	                }
-	                else
-	                {
-	                    Debug.LogError(
-	                        $"[ElysiumDB] Required extension missing: {attribute.ExtensionType.Name}");
-	                }
-	            }
+		                    Debug.Log($"[ElysiumDB] Auto created required extension: {attribute.ExtensionType.Name}");
+		                }
+		                catch (Exception ex)
+		                {
+		                    Debug.LogError($"[ElysiumDB] Failed to auto-create extension {attribute.ExtensionType.Name}: {ex.Message}");
+		                }
+		            }
+		            else
+		            {
+		                Debug.LogError($"[ElysiumDB] Required extension missing: {attribute.ExtensionType.Name} (AutoCreate = false)");
+		            }
+		        }
 		    }
 		}
 
