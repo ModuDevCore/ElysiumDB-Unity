@@ -754,7 +754,6 @@ namespace ModuDevCore.ElysiumDB.Editor.Internal
                         false,
                         () =>
                         {
-
                             ElysiumDatabase.AddExtension(type);
 
                             property.serializedObject.ApplyModifiedProperties();

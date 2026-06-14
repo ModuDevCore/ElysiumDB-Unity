@@ -1,6 +1,6 @@
 {
   "name": "com.modudevcore.elysiumdb",
-  "version": "3.0.2",
+  "version": "1.0.0",
   "displayName": "ElysiumDB",
   "description": "Unified database system for Unity with extension support",
   "unity": "2022.3",

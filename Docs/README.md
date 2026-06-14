@@ -4,7 +4,7 @@
 
 # ElysiumDB Unity Library
 
-[![GitHub releases](https://img.shields.io/github/v/release/ModuDevCore/ElysiumDB?style=flat-square)](https://github.com/ModuDevCore/ElysiumDB/releases)
+[![GitHub releases](https://img.shields.io/github/v/release/ModuDevCore/ElysiumDB?style=flat-square)](https://github.com/ModuDevCore/ElysiumDB-Unity/releases)
 [![Unity](https://img.shields.io/badge/Unity-2021.3%20%E2%80%93%202026.1-blue.svg?style=flat-square\&logo=unity)](https://unity.com/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg?style=flat-square)](LICENSE)
 [![OpenUPM](https://img.shields.io/badge/OpenUPM-available-green?style=flat-square)](https://openupm.com/packages/com.modudevcore.elysiumdb/)
@@ -22,10 +22,10 @@ It provides a unified centralized API for working with databases, extensions, an
 | **[Tutorial](./TUTORIAL.md)**                                      | Step-by-step guide with examples and usage scenarios |
 | **[API Reference](./REFERENCE.md)**                                | Full public API documentation                        |
 | **[Technical Documentation](./TECHNICAL.md)**                      | Architecture, internal systems, and extensions       |
-| [Releases](https://github.com/ModuDevCore/ElysiumDB/releases)      | Download the latest version                          |
+| [Releases](https://github.com/ModuDevCore/ElysiumDB-Unity/releases) | Download the latest version                          |
 | [OpenUPM](https://openupm.com/packages/com.modudevcore.elysiumdb/) | Install via Unity Package Manager                    |
-| [Issues](https://github.com/ModuDevCore/ElysiumDB/issues)          | Report bugs or issues                                |
-| [Pull Requests](https://github.com/ModuDevCore/ElysiumDB/pulls)    | Contribute to the project                            |
+| [Issues](https://github.com/ModuDevCore/ElysiumDB-Unity/issues)          | Report bugs or issues                                |
+| [Pull Requests](https://github.com/ModuDevCore/ElysiumDB-Unity/pulls)    | Contribute to the project                            |
 
 ---
 
@@ -63,6 +63,10 @@ https://github.com/ModuDevCore/ElysiumDB.git
 
 **Option C — .unitypackage**
 Download the latest release and import the `.unitypackage` into Unity.
+
+**Check out the tutorial**
+Detailed usage description, recommended for viewing.
+**[Tutorial](./TUTORIAL.md)**
 
 ---
 
