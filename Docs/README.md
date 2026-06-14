@@ -4,7 +4,7 @@
 
 # ElysiumDB Unity Library
 
-[![GitHub releases](https://img.shields.io/github/v/release/ModuDevCore/ElysiumDB?style=flat-square)](https://github.com/ModuDevCore/ElysiumDB-Unity/releases)
+[![GitHub releases](https://img.shields.io/github/v/release/ModuDevCore/ElysiumDB-Unity?style=flat-square)](https://github.com/ModuDevCore/ElysiumDB-Unity/releases)
 [![Unity](https://img.shields.io/badge/Unity-2021.3%20%E2%80%93%202026.1-blue.svg?style=flat-square\&logo=unity)](https://unity.com/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg?style=flat-square)](LICENSE)
 [![OpenUPM](https://img.shields.io/badge/OpenUPM-available-green?style=flat-square)](https://openupm.com/packages/com.modudevcore.elysiumdb/)
