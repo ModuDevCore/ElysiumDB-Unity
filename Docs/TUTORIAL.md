@@ -51,24 +51,22 @@ using UnityEngine;
 
 public class ExampleUsage : MonoBehaviour
 {
-    private ElysiumDatabase _db;
-
-    private async void Awake()
+    private void Awake()
     {
-        _db = new ElysiumDatabase();
-        _db.New(); // initialize system and connections
+        new ElysiumDatabase().New();
     }
 
-    private async void Start()
+    private void Start()
     {
-        var connection = _db.Connections["main"];
-
-        var reader = connection.RunCmd("SELECT * FROM Players");
+        var connection = ElysiumDatabase.Instance["main"];
+        var reader = connection.Query("SELECT * FROM Players");
 
         while (reader.Read())
         {
             Debug.Log(reader[0]);
         }
+      
+        reader.Dispose();
     }
 }
 ```
