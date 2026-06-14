@@ -1,6 +1,6 @@
 {
   "name": "com.modudevcore.elysiumdb",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "displayName": "ElysiumDB",
   "description": "Unified database system for Unity with extension support",
   "unity": "2022.3",
@@ -9,13 +9,17 @@
     "url": "https://github.com/ModuDevCore"
   },
   "files": [
-    "Core/**",
-    "Editor/**",
-    "Extensions/**",
-    "Attributes/**",
-    "Internal/**",
-    "Plugins/**",
-    "*.asmdef",
-    "*.cs"
+      "Core/**",
+      "Editor/**",
+      "Extensions/**",
+      "Attributes/**",
+      "Internal/**",
+      "Plugins/**",
+      "DBExtensionBase.cs",
+      "ElysiumDB.asmdef",
+      "Editor/ElysiumDB.Editor.asmdef",
+      "*.cs",
+      "*.meta",
+      "package.json"
   ]
 }
