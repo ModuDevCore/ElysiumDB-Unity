@@ -19,6 +19,7 @@
       "ElysiumDB.asmdef",
       "Editor/ElysiumDB.Editor.asmdef",
       "*.cs",
+      "*.meta",
       "package.json"
   ]
 }
