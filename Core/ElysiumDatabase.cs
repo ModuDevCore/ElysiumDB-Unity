@@ -373,7 +373,7 @@ namespace ModuDevCore.ElysiumDB
             if (bytes != null) EnsureFileExists(destPath, bytes);
 
             var conn = new SqliteConnection {
-                ConnectionString = destPath
+                ConnectionString = $"Data Source={destPath};Version=3;"
             };
             try {
                 conn.Open();
