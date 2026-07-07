@@ -7,6 +7,7 @@ using System.Diagnostics;
 using UnityEditor;
 using UnityEngine;
 
+using ModuDevCore.ElysiumDB;
 using ModuDevCore.ElysiumDB.Extension;
 using ModuDevCore.ElysiumDB.Editor.Internal;
 using ModuDevCore.ElysiumDB.Editor.Internal.GUI.List;
@@ -137,6 +138,7 @@ namespace ModuDevCore.ElysiumDB.Core.Settings.Editor
                 "Databases",
                 EditorStyles.boldLabel);
 
+            List<string> allKeysArray = initialized ? ElysiumDatabase.Instance.Connections.Keys.ToList() : new List<string>(); 
             foreach(var path in ElysiumDatabase.Settings.dbPaths) {
                 string fullPath =
                         Path.Combine(ElysiumDatabase.PlatformDataPath, path);
@@ -146,6 +148,9 @@ namespace ModuDevCore.ElysiumDB.Core.Settings.Editor
                         ElysiumDatabase.PlatformDataPath,
                         path));
                 bool connected = initialized ? ElysiumDatabase.Instance.Connections.ContainsKey(path) : false;
+
+                if(connected && initialized)
+                    allKeysArray.Remove(path);
 
                 EditorGUILayout.BeginHorizontal();
 
@@ -165,9 +170,28 @@ namespace ModuDevCore.ElysiumDB.Core.Settings.Editor
                 }
                 if (GUILayout.Button("Open", GUILayout.Width(60)))
                 {
-                    ShowOpenMenu(Path.Combine(Application.streamingAssetsPath, path), Path.Combine(ElysiumDatabase.PlatformDataPath, path));
+                    ShowOpenMenu(Path.Combine(Application.streamingAssetsPath, path), connected ? ElysiumDatabase.Instance.Connections[path].SqliteConnectionStringBuilder.DataSource : null);
                 }
 
+                EditorGUILayout.EndHorizontal();
+            }
+
+            foreach(var path in allKeysArray) {
+                EditorGUILayout.BeginHorizontal();
+
+                if (DrawStatus(path, true, " ( Connected in runtime )"))
+                    ElysiumDatabase.Instance.DetachDB(path);
+
+                GUILayout.FlexibleSpace();
+
+                if (GUILayout.Button("Copy Path", GUILayout.Width(80)))
+                {
+                    EditorGUIUtility.systemCopyBuffer = ElysiumDatabase.Instance.Connections[path].SqliteConnectionStringBuilder.DataSource;
+                }
+                if (GUILayout.Button("Open", GUILayout.Width(60)))
+                {
+                    ShowOpenMenu(null, ElysiumDatabase.Instance.Connections[path].SqliteConnectionStringBuilder.DataSource);
+                }
 
                 EditorGUILayout.EndHorizontal();
             }

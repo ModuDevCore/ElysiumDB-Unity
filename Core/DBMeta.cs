@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Runtime.CompilerServices;
 using System.Reflection;
+using Mono.Data.Sqlite;
 
 using UnityEngine;
 
@@ -12,6 +13,7 @@ namespace ModuDevCore.ElysiumDB
     public class DBMeta : IDisposable
     {
         public IDbConnection connection;
+        public SqliteConnectionStringBuilder SqliteConnectionStringBuilder => new SqliteConnectionStringBuilder(connection.ConnectionString);
 
         private bool ShouldIgnoreLog(string log)
         {
