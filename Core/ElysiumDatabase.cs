@@ -383,6 +383,38 @@ namespace ModuDevCore.ElysiumDB
                 Debug.Log($"DB exception: {conn.ConnectionString} \n {e}");
             }
         }
+        public void CreateSQLiteDatabase(string path) 
+        	=> CreateSQLiteDatabase(path, new SqliteConnectionStringBuilder());
+        public void CreateSQLiteDatabase(string path, bool platformDataPath) 
+        	=> CreateSQLiteDatabase(path, new SqliteConnectionStringBuilder(), platformDataPath);
+        public void CreateSQLiteDatabase(string path, string connectionString, bool platformDataPath = true) 
+        	=> CreateSQLiteDatabase(path, new SqliteConnectionStringBuilder(connectionString), platformDataPath);
+		public void CreateSQLiteDatabase(string path, SqliteConnectionStringBuilder userBuilder, bool platformDataPath = true)
+		{
+			string destPath = Path.Combine(PlatformDataPath, path);
+
+		    string directory = Path.GetDirectoryName(destPath);
+		    if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
+		    {
+		        Directory.CreateDirectory(directory);
+		    }
+
+		    var builder = new SqliteConnectionStringBuilder(userBuilder.ToString())
+		    {
+		        DataSource = destPath
+		    };
+
+		    string connectionString = builder.ToString();
+
+		    var conn = new SqliteConnection(connectionString);
+		    try {
+                conn.Open();
+                Connections[path] = new DBMeta { connection = conn };
+                Debug.Log($"DB loaded: {path}");
+            } catch(Exception e) {
+                Debug.Log($"DB exception: {conn.ConnectionString} \n {e}");
+            }
+		}
         #region File Utils
 
         private static byte[] LoadFileBytes(string path)
