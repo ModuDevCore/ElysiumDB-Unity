@@ -19,7 +19,11 @@ namespace ModuDevCore.ElysiumDB
         {
             var ignores = ElysiumDatabase.Settings?.logIgnorePatterns;
             var showLogs = ElysiumDatabase.Settings?.showLogs??true;
-            if (ignores == null || ignores.Count == 0 || !showLogs)
+
+            if(!showLogs)
+                return true;
+
+            if (ignores == null || ignores.Count == 0)
                 return false;
 
             for (int i = 0; i < ignores.Count; i++)

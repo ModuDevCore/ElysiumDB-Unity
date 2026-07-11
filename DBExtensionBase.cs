@@ -58,7 +58,7 @@ namespace ModuDevCore.ElysiumDB.Extension
         protected virtual void OnDispose() {}
 		public void Log(object message)
 	    {
-	        Debug.Log($"<color=#4CAF50>[{extensionName}]</color> " + message);
+	        Debug.Log($"<color=#90A4AE>[{extensionName}]</color> {message}");
 	    }
     }
 }
