@@ -345,18 +345,20 @@ namespace ModuDevCore.ElysiumDB
 
         public void New()
         {
-            Debug.Log("Initializing ElysiumDB...");
-
+            Debug.Log("<color=yellow>Initializing ElysiumDB...</color>");
+            Debug.Log("<color=yellow>Initializing StreamingAssetsPath...</color>");
             foreach (var db in Connections.Values)
                 try { db.Dispose(); } catch { }
-
-            Connections.Clear();
-            RunExtensionsProcess(ExtensionEvent.Initialize);
-
             foreach (var path in Settings.dbPaths)
             {
                 ConnectDB(path);
             }
+
+            Debug.Log("<color=yellow>Extensions Processing...</color>");
+
+            Connections.Clear();
+            RunExtensionsProcess(ExtensionEvent.Initialize);
+
 
             Instance = this;
 
@@ -378,9 +380,13 @@ namespace ModuDevCore.ElysiumDB
             try {
                 conn.Open();
                 Connections[path] = new DBMeta { connection = conn };
-                Debug.Log($"DB loaded: {path}");
+                Debug.Log(
+				    $"<color=#81C784>DB loaded</color>: {path}"
+				);
             } catch(Exception e) {
-                Debug.Log($"DB exception: {conn.ConnectionString} \n {e}");
+                Debug.Log(
+				    $"<color=#E57373>DB exception</color>: {conn.ConnectionString}\n{e}"
+				);
             }
         }
         public void CreateSQLiteDatabase(string path) 
@@ -410,9 +416,13 @@ namespace ModuDevCore.ElysiumDB
 		    try {
                 conn.Open();
                 Connections[path] = new DBMeta { connection = conn };
-                Debug.Log($"DB loaded: {path}");
+                Debug.Log(
+				    $"<color=#81C784>DB loaded</color>: {path}"
+				);
             } catch(Exception e) {
-                Debug.Log($"DB exception: {conn.ConnectionString} \n {e}");
+                Debug.Log(
+				    $"<color=#E57373>DB exception</color>: {conn.ConnectionString}\n{e}"
+				);
             }
 		}
         #region File Utils

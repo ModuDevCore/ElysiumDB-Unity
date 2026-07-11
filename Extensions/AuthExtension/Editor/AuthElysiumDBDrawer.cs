@@ -45,19 +45,6 @@ public class AuthElysiumDBDrawer : PropertyDrawer
         rect.y += EditorGUIUtility.singleLineHeight + 2;
         height += EditorGUIUtility.singleLineHeight + 2;
 
-        if (showCredentials)
-        {
-            string credentials = string.IsNullOrEmpty(auth.GetCredentials()) 
-                ? "— None —" 
-                : auth.GetCredentials();
-
-            rect.height = EditorStyles.textArea.CalcHeight(new GUIContent(credentials), rect.width);
-            rect.height += EditorGUIUtility.singleLineHeight;
-            EditorGUI.LabelField(rect, credentials, EditorStyles.textArea);
-            rect.y += rect.height;
-            height += rect.height;
-        }
-
         // Кнопки
         rect.y += 4;
         rect.height = 22;

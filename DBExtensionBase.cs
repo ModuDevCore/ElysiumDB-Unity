@@ -26,12 +26,13 @@ namespace ModuDevCore.ElysiumDB.Extension
 	            case ExtensionEvent.Initialize:
 	            	if(!enabled)
 	            		break;
-	            	Debug.Log($"[DBExtension] Initialize → {extensionName}");
+
+	            	Log($"<color=#81C784>Initialize</color> → <b>{extensionName}</b>");
 	                OnInitialize(еlysium);
 	                break;
 
 	            case ExtensionEvent.Dispose:
-	            	Debug.Log($"[DBExtension] Dispose → {extensionName}");
+	            	Log($"Dispose → {extensionName}");
 	                OnDispose();
 	                break;
 	        }
@@ -57,7 +58,7 @@ namespace ModuDevCore.ElysiumDB.Extension
         protected virtual void OnDispose() {}
 		public void Log(object message)
 	    {
-	        Debug.Log($"[{extensionName}] " + message);
+	        Debug.Log($"<color=#4CAF50>[{extensionName}]</color> " + message);
 	    }
     }
 }
