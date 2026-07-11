@@ -21,6 +21,7 @@ namespace ModuDevCore.ElysiumDB.Core.Settings.Editor
 
         public CustomList listLogsFilter;
         public CustomList listOfPathDB;
+        private bool showLogSettings = false;
 
         public override void OnInspectorGUI()
         {
@@ -50,6 +51,22 @@ namespace ModuDevCore.ElysiumDB.Core.Settings.Editor
                 (showLogs.boolValue ? "Hide" : "Show") + " Logs",
                 GUI.skin.button);
 
+            showLogSettings = EditorGUILayout.Foldout(
+                showLogSettings,
+                "Log Settings",
+                true);
+
+            if (showLogSettings)
+            {
+                using (new EditorGUI.DisabledScope(!showLogs.boolValue))
+                {
+                    DrawLogToggle("SQL Logs", "showSqlLogs");
+                    DrawLogToggle("Core Logs", "showCoreLogs");
+                    DrawLogToggle("Extension Proccesing Logs", "showExtensionProccesingLogs");
+                    DrawLogToggle("Default Logs", "showDefaultLogs");
+                }
+            }
+
             GUI.backgroundColor = oldColor;
 
             EditorGUILayout.Space(5);
@@ -60,6 +77,23 @@ namespace ModuDevCore.ElysiumDB.Core.Settings.Editor
             DrawElysiumDBInfo();
             DrawExtensions();
             serializedObject.ApplyModifiedProperties();
+        }
+        private void DrawLogToggle(string title, string propertyName)
+        {
+            SerializedProperty property = serializedObject.FindProperty(propertyName);
+
+            Color oldColor = GUI.backgroundColor;
+
+            GUI.backgroundColor = property.boolValue
+                ? Color.red
+                : Color.green;
+
+            property.boolValue = GUILayout.Toggle(
+                property.boolValue,
+                (property.boolValue ? "Hide " : "Show ") + title,
+                GUI.skin.button);
+
+            GUI.backgroundColor = oldColor;
         }
         bool DrawStatus(string label, bool state, string trueText = "TRUE", string falseText = "FALSE")
         {

@@ -10,38 +10,12 @@ using UnityEngine;
 
 namespace ModuDevCore.ElysiumDB 
 {
+    using Internal;
     public class DBMeta : IDisposable
     {
         public IDbConnection connection;
         public SqliteConnectionStringBuilder SqliteConnectionStringBuilder => new SqliteConnectionStringBuilder(connection.ConnectionString);
 
-        private bool ShouldIgnoreLog(string log)
-        {
-            var ignores = ElysiumDatabase.Settings?.logIgnorePatterns;
-            var showLogs = ElysiumDatabase.Settings?.showLogs??true;
-
-            if(!showLogs)
-                return true;
-
-            if (ignores == null || ignores.Count == 0)
-                return false;
-
-            for (int i = 0; i < ignores.Count; i++)
-            {
-                var pattern = ignores[i];
-
-                if (!string.IsNullOrEmpty(pattern) &&
-                    (
-                        log.Contains(pattern, StringComparison.OrdinalIgnoreCase)
-                    )
-                )
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
         public void Dispose()
         {
             connection?.Close();
@@ -59,21 +33,14 @@ namespace ModuDevCore.ElysiumDB
         {
             string file = System.IO.Path.GetFileName(callerFile);
 
-            if (!ShouldIgnoreLog(
-                    $"LiteSQL request\n" +
-                    $"QUERY: {cmd}\n" +
-                    $"DB: {connection.ConnectionString}\n" +
-                    $"CALLED FROM: {file}:{callerLine} ({callerMethod})"
-                )
-            )
-            {
-Debug.Log(
-    "<color=#78909C>[LiteSQL]</color>\n" +
-    $"<color=#9E9E9E>QUERY</color>: {cmd}\n" +
-    $"<color=#9E9E9E>DB</color>: {connection.ConnectionString}\n" +
-    $"<color=#9E9E9E>CALLER</color>: {file}:{callerLine} ({callerMethod})"
-);
-            }
+            DBLogger.Log(
+                "<color=#78909C>[LiteSQL]</color>\n" +
+                $"<color=#9E9E9E>QUERY</color>: {cmd}\n" +
+                $"<color=#9E9E9E>DB</color>: {connection.ConnectionString}\n" +
+                $"<color=#9E9E9E>CALLER</color>: {file}:{callerLine} ({callerMethod})"
+                ,
+                DBLogger.ContextLevel.SQLQuery
+            );
 
             IDbCommand dbcmd = connection.CreateCommand();
             dbcmd.CommandText = cmd;
@@ -199,21 +166,14 @@ Debug.Log(
         )
         {
             string file = System.IO.Path.GetFileName(callerFile);
-            if (!ShouldIgnoreLog(
-                    $"LiteSQL request\n" +
-                    $"QUERY: {cmd}\n" +
-                    $"DB: {connection.ConnectionString}\n" +
-                    $"CALLED FROM: {file}:{callerLine} ({callerMethod})"
-                )
-            )
-            {
-Debug.Log(
-    "<color=#78909C>[LiteSQL]</color>\n" +
-    $"<color=#9E9E9E>QUERY</color>: {cmd}\n" +
-    $"<color=#9E9E9E>DB</color>: {connection.ConnectionString}\n" +
-    $"<color=#9E9E9E>CALLER</color>: {file}:{callerLine} ({callerMethod})"
-);
-            }
+            DBLogger.Log(
+                "<color=#78909C>[LiteSQL]</color>\n" +
+                $"<color=#9E9E9E>QUERY</color>: {cmd}\n" +
+                $"<color=#9E9E9E>DB</color>: {connection.ConnectionString}\n" +
+                $"<color=#9E9E9E>CALLER</color>: {file}:{callerLine} ({callerMethod})"
+                ,
+                DBLogger.ContextLevel.SQLQuery
+            );
             using var dbcmd = connection.CreateCommand();
             if(parameters != null)
             foreach (var p in parameters)

@@ -15,6 +15,7 @@ namespace ModuDevCore.ElysiumDB
 	using Extension;
 	using Core.Settings;
 	using Internal.Data;
+	using Internal;
 
     public class ElysiumDatabase : IDisposable
     {
@@ -207,7 +208,7 @@ namespace ModuDevCore.ElysiumDB
 		    EditorUtility.SetDirty(Settings);
 		#endif
 
-		    Debug.Log($"[ElysiumDB] Extension added: {type.Name}");
+		    DBLogger.LogContext("[ElysiumDB]", $"Extension added: {type.Name}", DBLogger.ContextLevel.Core);
 
 		    ProcessRequiredExtensions();
 
@@ -253,7 +254,7 @@ namespace ModuDevCore.ElysiumDB
 		    UnityEditor.AssetDatabase.SaveAssets();
 		#endif
 
-		    Debug.Log($"[ElysiumDB] Extension removed: {type.Name}");
+		    DBLogger.LogContext("[ElysiumDB]", $"Extension removed: {type.Name}", DBLogger.ContextLevel.Core);
 		    return true;
 		}
 
@@ -345,20 +346,19 @@ namespace ModuDevCore.ElysiumDB
 
         public void New()
         {
-            Debug.Log("<color=yellow>Initializing ElysiumDB...</color>");
-            Debug.Log("<color=yellow>Initializing StreamingAssetsPath...</color>");
+            DBLogger.Log("<color=yellow>Initializing ElysiumDB...</color>", DBLogger.ContextLevel.Core);
+            DBLogger.Log("<color=yellow>Initializing StreamingAssetsPath...</color>", DBLogger.ContextLevel.Core);
             foreach (var db in Connections.Values)
                 try { db.Dispose(); } catch { }
+            Connections.Clear();
             foreach (var path in Settings.dbPaths)
             {
                 ConnectDB(path);
             }
 
-            Debug.Log("<color=yellow>Extensions Processing...</color>");
+            DBLogger.Log("<color=yellow>Extensions Processing...</color>", DBLogger.ContextLevel.Core);
 
-            Connections.Clear();
             RunExtensionsProcess(ExtensionEvent.Initialize);
-
 
             Instance = this;
 
@@ -380,13 +380,9 @@ namespace ModuDevCore.ElysiumDB
             try {
                 conn.Open();
                 Connections[path] = new DBMeta { connection = conn };
-                Debug.Log(
-				    $"<color=#81C784>DB loaded</color>: {path}"
-				);
+                DBLogger.LogContext("DBLoader", $"<color=#81C784>DB loaded</color>: {path}", DBLogger.ContextLevel.DBLoader);
             } catch(Exception e) {
-                Debug.Log(
-				    $"<color=#E57373>DB exception</color>: {conn.ConnectionString}\n{e}"
-				);
+                DBLogger.LogContext("DBLoader", $"<color=#E57373>DB exception</color>: {conn.ConnectionString}\n{e}", DBLogger.ContextLevel.DBLoader);
             }
         }
         public void CreateSQLiteDatabase(string path) 
@@ -413,16 +409,12 @@ namespace ModuDevCore.ElysiumDB
 		    string connectionString = builder.ToString();
 
 		    var conn = new SqliteConnection(connectionString);
-		    try {
+            try {
                 conn.Open();
                 Connections[path] = new DBMeta { connection = conn };
-                Debug.Log(
-				    $"<color=#81C784>DB loaded</color>: {path}"
-				);
+                DBLogger.LogContext("DBLoader", $"<color=#81C784>DB loaded</color>: {path}", DBLogger.ContextLevel.DBLoader);
             } catch(Exception e) {
-                Debug.Log(
-				    $"<color=#E57373>DB exception</color>: {conn.ConnectionString}\n{e}"
-				);
+                DBLogger.LogContext("DBLoader", $"<color=#E57373>DB exception</color>: {conn.ConnectionString}\n{e}", DBLogger.ContextLevel.DBLoader);
             }
 		}
         #region File Utils
