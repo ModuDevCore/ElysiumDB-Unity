@@ -145,6 +145,8 @@ namespace ModuDevCore.ElysiumDB.Editor.Internal
 
         private static Dictionary<string, IMGUITextFieldPro> tfps = new();
         private static HashSet<string> _usedThisFrame = new();
+        private static Texture2D _maskTexture;
+
         private static string GetScriptUniqueGUID(Type type, string instanceId)
         {
             if (type == null)
@@ -456,7 +458,7 @@ namespace ModuDevCore.ElysiumDB.Editor.Internal
                 $"Type: {typeName}\nFull Name: {boxed?.GetType().FullName ?? "Null"}"
             );
             EditorGUI.BeginChangeCheck();
-            // ObjectNames.NicifyVariableName(typeName)
+
             DrawHeader(
                 labelRect => {
                     EditorGUI.LabelField(labelRect, ObjectNames.NicifyVariableName(typeName), EditorStyles.boldLabel);
@@ -768,6 +770,94 @@ namespace ModuDevCore.ElysiumDB.Editor.Internal
 
             EditorGUILayout.EndHorizontal();
         }
+        static Texture2D MakeReadable(Texture source)
+        {
+            RenderTexture rt = RenderTexture.GetTemporary(
+                source.width,
+                source.height,
+                0,
+                RenderTextureFormat.ARGB32);
+
+            Graphics.Blit(source, rt);
+
+            RenderTexture previous = RenderTexture.active;
+            RenderTexture.active = rt;
+
+            Texture2D readable = new Texture2D(source.width, source.height, TextureFormat.RGBA32, false);
+            readable.ReadPixels(new Rect(0, 0, source.width, source.height), 0, 0);
+            readable.Apply();
+
+            RenderTexture.active = previous;
+            RenderTexture.ReleaseTemporary(rt);
+
+            return readable;
+        }
+        static Texture2D ApplyMask(Texture2D source)
+        {
+            // if (source == null)
+            //     return null;
+
+            // if (_maskTexture == null)
+            // {
+            //     string path = AssetDatabase.GUIDToAssetPath("5a55c06735795abbf958d2352508fb05");
+            //     _maskTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+            //     _maskTexture = MakeReadable(_maskTexture);
+            // }
+
+            // if (_maskTexture == null)
+            //     return source;
+
+            // int width = source.width;
+            // int height = source.height;
+
+            // Texture2D result = new Texture2D(width, height, TextureFormat.RGBA32, false);
+
+
+            // // 1.0 = исходный размер
+            // // >1 = увеличить
+            // // <1 = уменьшить
+            // const float scaleMultiplier = 1.3f;
+
+            // float scale = (float)height / _maskTexture.height * scaleMultiplier;
+
+            // float scaledWidth = _maskTexture.width * scale;
+            // float scaledHeight = _maskTexture.height * scale;
+
+            // float offsetXPixels = scaledWidth * -0.75f;
+
+            // float offsetX = (width - scaledWidth) * 0.5f + offsetXPixels;
+            // float offsetY = (height - scaledHeight) * 0.5f;
+
+            // for (int y = 0; y < height; y++)
+            // {
+            //     for (int x = 0; x < width; x++)
+            //     {
+            //         Color color = source.GetPixelBilinear(
+            //             (float)x / width,
+            //             (float)y / height);
+
+            //         float u = (x - offsetX) / scaledWidth;
+            //         float v = (y - offsetY) / scaledHeight;
+
+            //         if (u >= 0f && u <= 1f &&
+            //             v >= 0f && v <= 1f)
+            //         {
+            //             Color mask = _maskTexture.GetPixelBilinear(u, v);
+            //             color.a *= mask.a;
+            //         }
+            //         else
+            //         {
+            //             color.a = 0f;
+            //         }
+
+            //         result.SetPixel(x, y, color);
+            //     }
+            // }
+
+            // result.Apply();
+            // return result;
+            return source;
+        }
         static Texture2D GetClassIcon(Type type)
         {
             if (type == null)
@@ -788,6 +878,8 @@ namespace ModuDevCore.ElysiumDB.Editor.Internal
                     Texture2D customIcon = EditorGUIUtility.GetIconForObject(monoScript);
                     if (customIcon != null)
                     {
+                        // Texture2D readable = MakeReadable();
+                        // Texture2D masked = ApplyMask(readable);
                         _iconCache[type] = customIcon;
                         return customIcon;
                     }
@@ -796,6 +888,8 @@ namespace ModuDevCore.ElysiumDB.Editor.Internal
 
             if (_defaultScriptIcon == null)
             {
+                // Texture2D readable = MakeReadable(EditorGUIUtility.IconContent("cs Script Icon").image as Texture2D);
+                // Texture2D masked = ApplyMask(readable);
                 _defaultScriptIcon = EditorGUIUtility.IconContent("cs Script Icon").image as Texture2D;
             }
 
@@ -809,7 +903,6 @@ namespace ModuDevCore.ElysiumDB.Editor.Internal
         private readonly SerializedProperty _property;
         private readonly List<(string path, PropertyGroup group)> _allGroups;
 
-        // Для быстрого поиска пути по id
         private readonly Dictionary<int, string> _idToPath = new Dictionary<int, string>();
 
         public GroupPathDropdown(AdvancedDropdownState state, SerializedProperty property, SerializedProperty groupProp, 
@@ -860,7 +953,6 @@ namespace ModuDevCore.ElysiumDB.Editor.Internal
                 node = existing;
             }
 
-            // Присваиваем уникальный id последнему элементу
             node.id = idCounter;
             _idToPath[idCounter] = fullPath;
             idCounter++;

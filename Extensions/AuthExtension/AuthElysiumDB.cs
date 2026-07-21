@@ -1,5 +1,6 @@
-using UnityEngine;
 using System;
+using System.Threading.Tasks;
+using UnityEngine;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
@@ -18,13 +19,14 @@ public class AuthElysiumDB : DBExtensionBase
     private const string ColumnExpiry = "expiry_date";
     private const string ColumnUserId = "user_id";
 
-    public bool IsAuthenticated { get; private set; }
+    public bool IsAuthenticated { get; private set; } = false;
     public DBMeta authTable;
 
     private IAuthElysiumReceiver[] _receivers => GetExtensions<IAuthElysiumReceiver>();
 
     protected override void OnInitialize(ElysiumDatabase elysium)
     {
+        IsAuthenticated = false;
         Log("AuthElysiumDB initialized");
         
         elysium.CreateSQLiteDatabase("AuthElysiumDB.db");
@@ -49,7 +51,7 @@ public class AuthElysiumDB : DBExtensionBase
         authTable.Execute(createTableQuery);
     }
 
-    public void Auth(string credentials)
+    public async Task Auth(string credentials)
     {
         var expiry = ExtractExpiryFromJwt(credentials);
         var sub = ExtractUserIdFromJwt(credentials);
@@ -75,7 +77,7 @@ public class AuthElysiumDB : DBExtensionBase
 
         IsAuthenticated = true;
         NotifyAuthTokenUpdated(credentials);
-        FetchAuthUserData();
+        await FetchAuthUserData();
     }
 
     public void SignOut()
@@ -95,14 +97,14 @@ public class AuthElysiumDB : DBExtensionBase
         return result;
     }
 
-    private void LoadAuthState(ElysiumDatabase elysium)
+    private async void LoadAuthState(ElysiumDatabase elysium)
     {
         string token = GetCredentials()?.jwt_token;
         if (!string.IsNullOrEmpty(token))
         {
             IsAuthenticated = true;
             NotifyAuthTokenUpdated(token);
-            FetchAuthUserData();
+            await FetchAuthUserData();
         }
     }
 
@@ -140,10 +142,13 @@ public class AuthElysiumDB : DBExtensionBase
             receiver.OnAuthTokenUpdated(newJwt);
     }
 
-    void FetchAuthUserData() {
+    async Task FetchAuthUserData() {
         foreach (var receiver in _receivers)
-            receiver.OnFetchAuthUserData(authTable);
+            await receiver.OnFetchAuthUserData(authTable);
     }
 
-    protected override void OnDispose() {}
+    protected override void OnDispose() {
+        if(ElysiumDatabase.Instance.Connections.ContainsKey("AuthElysiumDB.db"))
+            ElysiumDatabase.Instance?.DetachDB("AuthElysiumDB.db");
+    }
 }

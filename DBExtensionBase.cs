@@ -6,8 +6,8 @@ using ModuDevCore.ElysiumDB.Internal;
 
 namespace ModuDevCore.ElysiumDB.Extension
 {
-	using Core;	
-	using Internal.Data;	
+	using Core;		
+	using Core.Data;	
 	[Serializable]
     public class DBExtensionBase
     {

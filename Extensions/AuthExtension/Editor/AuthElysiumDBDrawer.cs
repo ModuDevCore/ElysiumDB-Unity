@@ -59,8 +59,7 @@ public class AuthElysiumDBDrawer : PropertyDrawer
             if (EditorUtility.DisplayDialog("Clear Auth Session", 
                     "Are you sure you want to clear the session?", "Yes", "Cancel"))
             {
-                PlayerPrefs.DeleteKey("ElysiumSession");
-                auth.Auth("");
+                auth.SignOut();
                 EditorUtility.SetDirty(property.serializedObject.targetObject);
             }
         }

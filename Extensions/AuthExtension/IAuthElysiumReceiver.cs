@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using ModuDevCore.ElysiumDB;
 using Newtonsoft.Json.Linq;
 
@@ -7,5 +8,5 @@ public interface IAuthElysiumReceiver
 
     public void OnAuthLoggedOut();
 
-    public void OnFetchAuthUserData(DBMeta authTable);
+    public Task OnFetchAuthUserData(DBMeta authTable);
 }
