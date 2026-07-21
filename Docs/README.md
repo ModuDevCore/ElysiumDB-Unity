@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/ModuDevCore/about/main/Images/Baner.gif" width="800" alt="ElysiumDB Unity Library" />
+  <img src="./Images/ElysiumDBv120.png" width="800" alt="ElysiumDB Unity Library" />
 </p>
 
 # ElysiumDB Unity Library
@@ -11,9 +11,15 @@
 
 **ElysiumDB** is a modular Unity library for managing databases and an extensible data storage architecture.
 
-It provides a unified centralized API for working with databases, extensions, and connections, making it easier to build scalable data storage systems in Unity projects.
+It provides a unified centralized API for working with databases, extensions, and connections, making it easier to build scalable data storage systems in Unity projects. Start developing, see [TUTORIAL.md](TUTORIAL.md) 
 
----
+<p align="center">
+  <a href="TUTORIAL.md"><img src="./Images/Tutorial.png" alt="Tutorial.md" hspace="10"></a>
+
+  <a href="REFERENCE.md"><img src="./Images/Reference.png" alt="Reference.md" hspace="10"></a>
+
+  <a href="changelog.md"><img src="./Images/ChangeLog.png" alt="ChangeLog.md" hspace="10"></a>
+</p>
 
 ## 📌 Useful Links
 
@@ -78,15 +84,13 @@ using UnityEngine;
 
 public class ExampleUsage : MonoBehaviour
 {
-    private void Awake()
+    private async void Start()
     {
-        new ElysiumDatabase().New();
-    }
+        var elysiumDB = new ElysiumDatabase();
+        elysiumDB.New(); // Initialization of databases and extensions, now you can get an instance through ElysiumDatabase.Instance.
 
-    private void Start()
-    {
-        var connection = ElysiumDatabase.Instance["main"];
-        var reader = connection.Query("SELECT * FROM Players");
+        DBMeta connection = elysiumDB["main"]; // Or elysiumDB.Connections["main"]
+        var reader = connection.Query("SELECT * FROM Players"); // 
 
         while (reader.Read())
         {
@@ -97,6 +101,8 @@ public class ExampleUsage : MonoBehaviour
     }
 }
 ```
+
+See also: [DBMeta](#), [ElysiumDatabase](#)
 
 ---
 

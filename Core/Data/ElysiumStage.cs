@@ -1,16 +1,18 @@
-public enum ElysiumStage
-{
-    None,
+namespace ModuDevCore.ElysiumDB.Core.Data{
+    public enum ElysiumStage
+    {
+        None,
 
-    Initializing,
-    DatabasesConnecting,
-    DatabasesConnected,
+        Initializing,
+        DatabasesConnecting,
+        DatabasesConnected,
 
-    ExtensionsInitializing,
-    ExtensionInitialized,
+        ExtensionsInitializing,
+        ExtensionInitialized,
 
-    Ready,
+        Ready,
 
-    Disposing,
-    Disposed
+        Disposing,
+        Disposed
+    }
 }

@@ -47,7 +47,6 @@ public class AuthElysiumDB : DBExtensionBase
                 {ColumnUserId} TEXT,
                 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
             );";
-
         authTable.Execute(createTableQuery);
     }
 
