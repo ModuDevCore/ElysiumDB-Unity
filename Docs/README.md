@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/ModuDevCore/about/main/Images/Baner.gif" width="800" alt="ElysiumDB Unity Library" />
+  <img src="./Images/ElysiumDBv120.png" width="800" alt="ElysiumDB Unity Library" />
 </p>
 
 # ElysiumDB Unity Library
@@ -11,9 +11,15 @@
 
 **ElysiumDB** is a modular Unity library for managing databases and an extensible data storage architecture.
 
-It provides a unified centralized API for working with databases, extensions, and connections, making it easier to build scalable data storage systems in Unity projects.
+It provides a unified centralized API for working with databases, extensions, and connections, making it easier to build scalable data storage systems in Unity projects. Start developing, see [TUTORIAL.md](TUTORIAL.md) 
 
----
+<p align="center">
+  <a href="TUTORIAL.md"><img src="./Images/Tutorial.png" alt="Tutorial.md" hspace="10"></a>
+
+  <a href="REFERENCE.md"><img src="./Images/Reference.png" alt="Reference.md" hspace="10"></a>
+
+  <a href="changelog.md"><img src="./Images/ChangeLog.png" alt="ChangeLog.md" hspace="10"></a>
+</p>
 
 ## 📌 Useful Links
 
@@ -26,6 +32,22 @@ It provides a unified centralized API for working with databases, extensions, an
 | [OpenUPM](https://openupm.com/packages/com.modudevcore.elysiumdb/) | Install via Unity Package Manager                    |
 | [Issues](https://github.com/ModuDevCore/ElysiumDB-Unity/issues)          | Report bugs or issues                                |
 | [Pull Requests](https://github.com/ModuDevCore/ElysiumDB-Unity/pulls)    | Contribute to the project                            |
+
+### 📂 Database Examples
+
+- [Managing Multiple Databases](./Examples/Database/DBConnections.md)
+- [Executing SQL Commands](./Examples/Database/Execute.md)
+- [Query Examples](./Examples/Database/QueryExamples.md)
+- [Process management](./Examples/Database/ProcessManagement.md)
+- [CreateElysiumDatabase](./Examples/CreateElysiumDatabase.md)
+
+### 🧩 Extension Examples
+
+- [Creating and Using Extensions](./Examples/Extensions/CreateAndUseExtensions.md)
+- [RequireExtensionAttribute](./Examples/Extensions/RequireExtensionAttribute.md)
+- [ExtensionProcessOrderAttribute](./Examples/Extensions/ExtensionProcessOrderAttribute.md)
+- [DefaultExtensionGroupAttribute](./Examples/Extensions/DefaultExtensionGroupAttribute.md)
+- [AfterExtensionAttribute](./Examples/Extensions/AfterExtensionAttribute.md)
 
 ---
 
@@ -75,25 +97,30 @@ Detailed usage description, recommended for viewing.
 ```csharp
 using ModuDevCore.ElysiumDB;
 using UnityEngine;
+using System.Collections.Generic;
+
+public class Player
+{
+    public string Name;
+    public int Money;
+    public int Score;
+}
 
 public class ExampleUsage : MonoBehaviour
 {
-    private void Awake()
-    {
-        new ElysiumDatabase().New();
-    }
-
     private void Start()
     {
-        var connection = ElysiumDatabase.Instance["main"];
-        var reader = connection.Query("SELECT * FROM Players");
+        var elysiumDB = new ElysiumDatabase();
+        elysiumDB.New();
 
-        while (reader.Read())
+        List<Player> players = elysiumDB["main"].QueryList<Player>(
+            "SELECT Name, Money, Score FROM Player"
+        );
+
+        foreach (Player player in players)
         {
-            Debug.Log(reader[0]);
+            Debug.Log($"{player.Name} | Money: {player.Money} | Score: {player.Score}");
         }
-      
-        reader.Dispose();
     }
 }
 ```

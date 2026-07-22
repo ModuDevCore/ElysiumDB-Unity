@@ -2,11 +2,12 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine;
+using ModuDevCore.ElysiumDB.Internal;
 
 namespace ModuDevCore.ElysiumDB.Extension
 {
-	using Core;	
-	using Internal.Data;	
+	using Core;		
+	using Core.Data;	
 	[Serializable]
     public class DBExtensionBase
     {
@@ -26,12 +27,13 @@ namespace ModuDevCore.ElysiumDB.Extension
 	            case ExtensionEvent.Initialize:
 	            	if(!enabled)
 	            		break;
-	            	Debug.Log($"[DBExtension] Initialize → {extensionName}");
+
+	            	DBLogger.LogContext(extensionName+"Proccesing", $"<color=#81C784>Initialize</color> → <b>{extensionName}</b>", DBLogger.ContextLevel.ExtensionProccesing);
 	                OnInitialize(еlysium);
 	                break;
 
 	            case ExtensionEvent.Dispose:
-	            	Debug.Log($"[DBExtension] Dispose → {extensionName}");
+	            	DBLogger.LogContext(extensionName+"Proccesing", $"Dispose → {extensionName}", DBLogger.ContextLevel.ExtensionProccesing);
 	                OnDispose();
 	                break;
 	        }
@@ -57,7 +59,7 @@ namespace ModuDevCore.ElysiumDB.Extension
         protected virtual void OnDispose() {}
 		public void Log(object message)
 	    {
-	        Debug.Log($"[{extensionName}] " + message);
+	    	DBLogger.LogContext(extensionName, message);
 	    }
     }
 }

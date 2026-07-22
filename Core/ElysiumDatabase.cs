@@ -10,12 +10,15 @@ using UnityEditor;
 
 using Mono.Data.Sqlite;
 
+using System.Threading.Tasks;
+
 namespace ModuDevCore.ElysiumDB 
 {
 	using Extension;
 	using Core.Settings;
-	using Internal.Data;
-
+	using Core.Data;
+	using Internal;
+	
     public class ElysiumDatabase : IDisposable
     {
         public static ElysiumDatabase Instance;
@@ -32,6 +35,13 @@ namespace ModuDevCore.ElysiumDB
                 ? $"/data/data/{Application.identifier}"
                 : Application.persistentDataPath;
 
+
+		private readonly Dictionary<(ExtensionEvent, Type), TaskCompletionSource<bool>> _processWaiters
+		    = new();
+
+		private readonly Dictionary<(ExtensionEvent, string, int), TaskCompletionSource<bool>> _orderWaiters
+		    = new();
+
 		public DBMeta this[string database]
 		{
 		    get => Connections[database];
@@ -43,6 +53,13 @@ namespace ModuDevCore.ElysiumDB
 		public static void Log(string message) => Instance?.EnqueueLog(message, LogType.Log);
 		public static void LogWarning(string message) => Instance?.EnqueueLog(message, LogType.Warning);
 		public static void LogError(string message) => Instance?.EnqueueLog(message, LogType.Error);
+
+		private static HashSet<ExtensionEvent> suspend = new HashSet<ExtensionEvent>();
+		private static Dictionary<ExtensionEvent, Queue<DBExtensionBase>> process = new Dictionary<ExtensionEvent, Queue<DBExtensionBase>>();
+		private static Dictionary<ExtensionEvent, Queue<DBExtensionBase>> completedProcesses = new Dictionary<ExtensionEvent, Queue<DBExtensionBase>>();
+		private static Dictionary<ExtensionEvent, Dictionary<HashSet<Type>, Queue<DBExtensionBase>>> processAwaiting = new Dictionary<ExtensionEvent, Dictionary<HashSet<Type>, Queue<DBExtensionBase>>>();
+
+		public event Action<ElysiumStage, object> OnStageChanged;
 
 		private void EnqueueLog(string message, LogType type = LogType.Log)
 		{
@@ -66,48 +83,125 @@ namespace ModuDevCore.ElysiumDB
 		    if (Settings.extensions == null || Settings.extensions.Count == 0)
 		        return;
 
-		    var orderedExtensions = Settings.extensions
-		        .OrderBy(ext =>
-		        {
-		            var attr = ext.GetType().GetCustomAttribute<ExtensionProcessOrderAttribute>();
-		            return (attr?.Group ?? "Default", attr?.Order ?? 0);
-		        })
-		        .ThenBy(ext => Settings.extensions.IndexOf(ext)) // стабильность
-		        .ToList();
 
-		    if (processEvent == ExtensionEvent.Initialize)
+			if (!process.TryGetValue(processEvent, out var processQueue))
+			{
+			    processQueue = new Queue<DBExtensionBase>();
+			    var orderedExtensions = Settings.extensions
+			        .OrderBy(ext =>
+			        {
+			            var attr = ext.GetType().GetCustomAttribute<ExtensionProcessOrderAttribute>();
+			            return (attr?.Group ?? "Default", attr?.Order ?? 0);
+			        })
+			        .ThenBy(ext => Settings.extensions.IndexOf(ext))
+			        .ToList();
+			    if (processEvent == ExtensionEvent.Dispose)
+			    {
+			        for (int i = orderedExtensions.Count - 1; i >= 0; i--)
+			        {
+			            processQueue.Enqueue(orderedExtensions[i]);
+			        }
+			    }
+			    else
+			    {
+			        foreach (var extension in orderedExtensions)
+			        {
+			            processQueue.Enqueue(extension);
+			        }
+			    }
+
+			    process[processEvent] = processQueue;
+			}
+
+		    while (processQueue.Count > 0)
 		    {
-		        foreach (var extension in orderedExtensions)
-		        {
-		            SafeProcess(extension, processEvent);
-		        }
+		    	var extension = processQueue.Dequeue();
+				var afterTypes = extension.GetType()
+				    .GetCustomAttributes<AfterExtensionAttribute>(true)
+				    .Select(attr => attr.ExtensionType)
+				    .ToHashSet();
+		        
+    			if(afterTypes.Count > 0) {				
+			        if (!processAwaiting.TryGetValue(processEvent, out var processAwait))
+					{
+						processAwaiting[processEvent] = new Dictionary<HashSet<Type>, Queue<DBExtensionBase>>();
+					}
+					if (!processAwaiting[processEvent].TryGetValue(afterTypes, out var processAwaitQueue))
+					{
+						processAwaiting[processEvent][afterTypes] = new Queue<DBExtensionBase>();
+					}
+					processAwaiting[processEvent][afterTypes].Enqueue(extension);
+					continue;
+    			}
+				if(processEvent == ExtensionEvent.Initialize || processEvent == ExtensionEvent.Dispose)
+					OnStageChanged?.Invoke(processEvent == ExtensionEvent.Initialize ? ElysiumStage.ExtensionsInitializing : ElysiumStage.Disposing, extension);
+		        SafeProcess(extension, processEvent);
+		        if(suspend.Contains(processEvent))
+		        	break; 
 		    }
-		    else if (processEvent == ExtensionEvent.Dispose)
-		    {
-		        for (int i = orderedExtensions.Count - 1; i >= 0; i--)
-		        {
-		            SafeProcess(orderedExtensions[i], processEvent);
-		        }
-		    }
-		    else
-		    {
-		        foreach (var extension in orderedExtensions)
-		        {
-		            SafeProcess(extension, processEvent);
-		        }
-		    }
+			if (processQueue.Count == 0)
+			{
+			    process.Remove(processEvent);
+			    completedProcesses.Remove(processEvent);
+			    OnStageChanged?.Invoke(ElysiumStage.Ready, null);
+			}
 		}
-
 		private void SafeProcess(DBExtensionBase extension, ExtensionEvent evt)
 		{
 		    try
 		    {
 		        extension.Process(evt, this);
+		        if(evt == ExtensionEvent.Initialize || evt == ExtensionEvent.Dispose)
+    				OnStageChanged?.Invoke(evt == ExtensionEvent.Initialize ? ElysiumStage.ExtensionInitialized : ElysiumStage.Disposed, extension);
+
+		        if (!completedProcesses.TryGetValue(evt, out var completedQueue))
+		        {
+		            completedQueue = new Queue<DBExtensionBase>();
+		            completedProcesses[evt] = completedQueue;
+		        }
+
+		        completedQueue.Enqueue(extension);
+
+		        if (processAwaiting.TryGetValue(evt, out var awaiting))
+		        {
+		            var completedType = extension.GetType();
+
+		            foreach (var pair in awaiting.ToList())
+		            {
+		                pair.Key.Remove(completedType);
+
+		                if (pair.Key.Count != 0)
+		                    continue;
+
+		                while (pair.Value.Count > 0)
+		                {
+		                    var waitingExtension = pair.Value.Dequeue();
+							if(evt == ExtensionEvent.Initialize || evt == ExtensionEvent.Dispose)
+								OnStageChanged?.Invoke(evt == ExtensionEvent.Initialize ? ElysiumStage.ExtensionsInitializing : ElysiumStage.Disposing, waitingExtension);
+		                    SafeProcess(waitingExtension, evt);
+
+		                    if (suspend.Contains(evt))
+		                        return;
+		                }
+
+		                awaiting.Remove(pair.Key);
+		            }
+
+		            if (awaiting.Count == 0)
+		                processAwaiting.Remove(evt);
+		        }
 		    }
 		    catch (Exception e)
 		    {
 		        Debug.LogError($"[ElysiumDB] Error in extension {extension.GetType().Name} during {evt}: {e}");
 		    }
+		}
+		public void Suspend(ExtensionEvent extensionEvent) {
+			suspend.Add(extensionEvent);
+		}
+		public void Resume(ExtensionEvent extensionEvent) {
+			suspend.Remove(extensionEvent);
+			RunExtensionsProcess(extensionEvent);
 		}
 
 		public static T GetExtension<T>() where T : class
@@ -200,14 +294,18 @@ namespace ModuDevCore.ElysiumDB
 		    Settings.extensions.Add(extension);
 
 		    ElysiumDatabase context = Instance;
-		    if (context != null)
-		        context.SafeProcess(extension, ExtensionEvent.Initialize);
+
+		    if (context != null){
+		    	process[ExtensionEvent.Initialize] = new Queue<DBExtensionBase>();
+		    	process[ExtensionEvent.Initialize].Enqueue(extension);
+		        context.RunExtensionsProcess(ExtensionEvent.Initialize);
+		    }
 
 		#if UNITY_EDITOR
 		    EditorUtility.SetDirty(Settings);
 		#endif
 
-		    Debug.Log($"[ElysiumDB] Extension added: {type.Name}");
+		    DBLogger.LogContext("[ElysiumDB]", $"Extension added: {type.Name}", DBLogger.ContextLevel.Core);
 
 		    ProcessRequiredExtensions();
 
@@ -253,7 +351,7 @@ namespace ModuDevCore.ElysiumDB
 		    UnityEditor.AssetDatabase.SaveAssets();
 		#endif
 
-		    Debug.Log($"[ElysiumDB] Extension removed: {type.Name}");
+		    DBLogger.LogContext("[ElysiumDB]", $"Extension removed: {type.Name}", DBLogger.ContextLevel.Core);
 		    return true;
 		}
 
@@ -281,6 +379,7 @@ namespace ModuDevCore.ElysiumDB
 
 		    return result.ToList();
 		}
+
 		public static void ProcessRequiredExtensions()
 		{
 		    if (Settings.extensions == null) return;
@@ -345,27 +444,30 @@ namespace ModuDevCore.ElysiumDB
 
         public void New()
         {
-            Debug.Log("Initializing ElysiumDB...");
-
+            DBLogger.Log("<color=yellow>Initializing ElysiumDB...</color>", DBLogger.ContextLevel.Core);
+            DBLogger.Log("<color=yellow>Initializing StreamingAssetsPath...</color>", DBLogger.ContextLevel.Core);
             foreach (var db in Connections.Values)
                 try { db.Dispose(); } catch { }
-
             Connections.Clear();
-            RunExtensionsProcess(ExtensionEvent.Initialize);
-
             foreach (var path in Settings.dbPaths)
             {
                 ConnectDB(path);
             }
 
+            DBLogger.Log("<color=yellow>Extensions Processing...</color>", DBLogger.ContextLevel.Core);
+
+            RunExtensionsProcess(ExtensionEvent.Initialize);
+
             Instance = this;
 
         }
+
         public void DetachDB(string path) {
             Connections[path].Dispose();
             Connections.Remove(path);
         }
         public void ConnectDB(string path) {
+    		OnStageChanged?.Invoke(ElysiumStage.DatabasesConnecting, path);
             string filePath = Path.Combine(Application.streamingAssetsPath, path);
             string destPath = Path.Combine(PlatformDataPath, path);
 
@@ -378,9 +480,10 @@ namespace ModuDevCore.ElysiumDB
             try {
                 conn.Open();
                 Connections[path] = new DBMeta { connection = conn };
-                Debug.Log($"DB loaded: {path}");
+                DBLogger.LogContext("DBLoader", $"<color=#81C784>DB loaded</color>: {path}", DBLogger.ContextLevel.DBLoader);
+    			OnStageChanged?.Invoke(ElysiumStage.DatabasesConnected, path);
             } catch(Exception e) {
-                Debug.Log($"DB exception: {conn.ConnectionString} \n {e}");
+                DBLogger.LogContext("DBLoader", $"<color=#E57373>DB exception</color>: {conn.ConnectionString}\n{e}", DBLogger.ContextLevel.DBLoader);
             }
         }
         public void CreateSQLiteDatabase(string path) 
@@ -406,15 +509,19 @@ namespace ModuDevCore.ElysiumDB
 
 		    string connectionString = builder.ToString();
 
+    		OnStageChanged?.Invoke(ElysiumStage.DatabasesConnecting, path);
+		    
 		    var conn = new SqliteConnection(connectionString);
-		    try {
+            try {
                 conn.Open();
                 Connections[path] = new DBMeta { connection = conn };
-                Debug.Log($"DB loaded: {path}");
+                DBLogger.LogContext("DBLoader", $"<color=#81C784>DB loaded</color>: {path}", DBLogger.ContextLevel.DBLoader);
+    			OnStageChanged?.Invoke(ElysiumStage.DatabasesConnected, path);
             } catch(Exception e) {
-                Debug.Log($"DB exception: {conn.ConnectionString} \n {e}");
+                DBLogger.LogContext("DBLoader", $"<color=#E57373>DB exception</color>: {conn.ConnectionString}\n{e}", DBLogger.ContextLevel.DBLoader);
             }
 		}
+
         #region File Utils
 
         private static byte[] LoadFileBytes(string path)

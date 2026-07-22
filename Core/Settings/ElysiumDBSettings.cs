@@ -15,5 +15,9 @@ namespace ModuDevCore.ElysiumDB.Core.Settings
         [SerializeReference]
         public List<DBExtensionBase> extensions = new();
         public bool showLogs = true;
+        public bool showSqlLogs = true;
+        public bool showCoreLogs = true;
+        public bool showDefaultLogs = true;
+        public bool showExtensionProccesingLogs = true;
     } 
 }

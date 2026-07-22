@@ -10,34 +10,12 @@ using UnityEngine;
 
 namespace ModuDevCore.ElysiumDB 
 {
+    using Internal;
     public class DBMeta : IDisposable
     {
         public IDbConnection connection;
         public SqliteConnectionStringBuilder SqliteConnectionStringBuilder => new SqliteConnectionStringBuilder(connection.ConnectionString);
 
-        private bool ShouldIgnoreLog(string log)
-        {
-            var ignores = ElysiumDatabase.Settings?.logIgnorePatterns;
-            var showLogs = ElysiumDatabase.Settings?.showLogs??true;
-            if (ignores == null || ignores.Count == 0 || !showLogs)
-                return false;
-
-            for (int i = 0; i < ignores.Count; i++)
-            {
-                var pattern = ignores[i];
-
-                if (!string.IsNullOrEmpty(pattern) &&
-                    (
-                        log.Contains(pattern, StringComparison.OrdinalIgnoreCase)
-                    )
-                )
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
         public void Dispose()
         {
             connection?.Close();
@@ -47,6 +25,7 @@ namespace ModuDevCore.ElysiumDB
         public IDataReader Query(
             string cmd,
             int linesToRead = 0,
+            (string name, object value)[]? parameters = null,
             [CallerMemberName] string callerMethod = "",
             [CallerFilePath] string callerFile = "",
             [CallerLineNumber] int callerLine = 0
@@ -54,24 +33,25 @@ namespace ModuDevCore.ElysiumDB
         {
             string file = System.IO.Path.GetFileName(callerFile);
 
-            if (!ShouldIgnoreLog(
-                    $"LiteSQL request\n" +
-                    $"QUERY: {cmd}\n" +
-                    $"DB: {connection.ConnectionString}\n" +
-                    $"CALLED FROM: {file}:{callerLine} ({callerMethod})"
-                )
-            )
-            {
-                Debug.Log(
-                    $"LiteSQL request\n" +
-                    $"QUERY: {cmd}\n" +
-                    $"DB: {connection.ConnectionString}\n" +
-                    $"CALLED FROM: {file}:{callerLine} ({callerMethod})"
-                );
-            }
+            DBLogger.Log(
+                "<color=#78909C>[LiteSQL]</color>\n" +
+                $"<color=#9E9E9E>QUERY</color>: {cmd}\n" +
+                $"<color=#9E9E9E>DB</color>: {connection.ConnectionString}\n" +
+                $"<color=#9E9E9E>CALLER</color>: {file}:{callerLine} ({callerMethod})"
+                ,
+                DBLogger.ContextLevel.SQLQuery
+            );
 
             IDbCommand dbcmd = connection.CreateCommand();
             dbcmd.CommandText = cmd;
+            if(parameters != null)
+            foreach (var p in parameters)
+            {
+                var param = dbcmd.CreateParameter();
+                param.ParameterName = p.name;
+                param.Value = p.value ?? DBNull.Value;
+                dbcmd.Parameters.Add(param);
+            }
             IDataReader reader = dbcmd.ExecuteReader();
 
             for (int i = 0; i < linesToRead; i++)
@@ -82,12 +62,13 @@ namespace ModuDevCore.ElysiumDB
         public T QueryFirst<T>(
             string cmd,
             int linesToRead = 0,
+            (string name, object value)[]? parameters = null,
             [CallerMemberName] string callerMethod = "",
             [CallerFilePath] string callerFile = "",
             [CallerLineNumber] int callerLine = 0
         ) where T : new()
         {
-            using IDataReader reader = Query(cmd, linesToRead, callerMethod, callerFile, callerLine);
+            using IDataReader reader = Query(cmd, linesToRead, parameters, callerMethod, callerFile, callerLine);
 
             if (!reader.Read())
                 return default;
@@ -97,6 +78,7 @@ namespace ModuDevCore.ElysiumDB
         public List<T> QueryList<T>(
             string cmd,
             int linesToRead = 0,
+            (string name, object value)[]? parameters = null,
             [CallerMemberName] string callerMethod = "",
             [CallerFilePath] string callerFile = "",
             [CallerLineNumber] int callerLine = 0
@@ -104,7 +86,7 @@ namespace ModuDevCore.ElysiumDB
         {
             List<T> result = new();
 
-            using IDataReader reader = Query(cmd, linesToRead, callerMethod, callerFile, callerLine);
+            using IDataReader reader = Query(cmd, linesToRead, parameters, callerMethod, callerFile, callerLine);
 
             while (reader.Read())
             {
@@ -133,12 +115,13 @@ namespace ModuDevCore.ElysiumDB
         }
         public T QueryValue<T>(
             string cmd,
+            (string name, object value)[]? parameters = null,
             [CallerMemberName] string callerMethod = "",
             [CallerFilePath] string callerFile = "",
             [CallerLineNumber] int callerLine = 0
         )
         {
-            using IDataReader reader = Query(cmd, 0, callerMethod, callerFile, callerLine);
+            using IDataReader reader = Query(cmd, 0, parameters, callerMethod, callerFile, callerLine);
 
             if (!reader.Read())
                 return default;
@@ -154,6 +137,7 @@ namespace ModuDevCore.ElysiumDB
         }
         public Dictionary<TKey, TValue> QueryDictionary<TKey, TValue>(
             string cmd,
+            (string name, object value)[]? parameters = null,
             [CallerMemberName] string callerMethod = "",
             [CallerFilePath] string callerFile = "",
             [CallerLineNumber] int callerLine = 0
@@ -161,7 +145,7 @@ namespace ModuDevCore.ElysiumDB
         {
             Dictionary<TKey, TValue> result = new();
 
-            using IDataReader reader = Query(cmd, 0, callerMethod, callerFile, callerLine);
+            using IDataReader reader = Query(cmd, 0, parameters, callerMethod, callerFile, callerLine);
 
             while (reader.Read())
             {
@@ -173,15 +157,44 @@ namespace ModuDevCore.ElysiumDB
 
             return result;
         }
-        public void Execute(string cmd)
+        public void Execute(
+            string cmd,
+            (string name, object value)[]? parameters = null,
+            [CallerMemberName] string callerMethod = "",
+            [CallerFilePath] string callerFile = "",
+            [CallerLineNumber] int callerLine = 0
+        )
         {
+            string file = System.IO.Path.GetFileName(callerFile);
+            DBLogger.Log(
+                "<color=#78909C>[LiteSQL]</color>\n" +
+                $"<color=#9E9E9E>QUERY</color>: {cmd}\n" +
+                $"<color=#9E9E9E>DB</color>: {connection.ConnectionString}\n" +
+                $"<color=#9E9E9E>CALLER</color>: {file}:{callerLine} ({callerMethod})"
+                ,
+                DBLogger.ContextLevel.SQLQuery
+            );
             using var dbcmd = connection.CreateCommand();
+            if(parameters != null)
+            foreach (var p in parameters)
+            {
+                var param = dbcmd.CreateParameter();
+                param.ParameterName = p.name;
+                param.Value = p.value ?? DBNull.Value;
+                dbcmd.Parameters.Add(param);
+            }
             dbcmd.CommandText = cmd;
             dbcmd.ExecuteNonQuery();
         }
-        public bool Exists(string cmd)
+        public bool Exists(
+            string cmd,
+            (string name, object value)[]? parameters = null,
+            [CallerMemberName] string callerMethod = "",
+            [CallerFilePath] string callerFile = "",
+            [CallerLineNumber] int callerLine = 0
+        )
         {
-            using IDataReader reader = Query(cmd);
+            using IDataReader reader = Query(cmd, 0, parameters, callerMethod, callerFile, callerLine);
             return reader.Read();
         }
         private static T MapReaderToObject<T>(IDataReader reader)
