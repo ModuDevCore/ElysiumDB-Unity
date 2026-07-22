@@ -178,6 +178,6 @@ Each attribute is described in its own documentation page.
 > - [AfterExtensionAttribute](./AfterExtensionAttribute.md)
 > - [ExtensionProcessOrderAttribute](./ExtensionProcessOrderAttribute.md)
 > - [DefaultExtensionGroupAttribute](./DefaultExtensionGroupAttribute.md)
-> - [Process Management](./ProcessManagement.md)
+> - [Process Management](../Database/ProcessManagement.md)
 > - [DBExtensionBase](../../REFERENCE.md#modudevcoreelysiumdbextensiondbextensionbase)
 > - [ElysiumDatabase](../../REFERENCE.md#modudevcoreelysiumdbelysiumdatabase)

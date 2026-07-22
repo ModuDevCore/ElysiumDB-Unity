@@ -92,5 +92,5 @@ This guarantees that the database structure exists before loading player data.
 > - [RequireExtensionAttribute](./RequireExtensionAttribute.md)
 > - [ExtensionProcessOrderAttribute](./ExtensionProcessOrderAttribute.md)
 > - [Create and Use Extensions](./CreateAndUseExtensions.md)
-> - [Process Management](./ProcessManagement.md)
+> - [Process Management](../Database/ProcessManagement.md)
 > - [AfterExtensionAttribute](../../REFERENCE.md#modudevcoreelysiumdbattributesafterextensionattribute)

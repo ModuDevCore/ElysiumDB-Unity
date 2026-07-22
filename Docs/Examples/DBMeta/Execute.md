@@ -134,7 +134,7 @@ ElysiumDatabase.Instance["Players.db"].Execute(
 
 > **See also**
 >
-> - [CreateSQLiteDatabase](./CreateSQLiteDatabase.md)
+> - [CreateSQLiteDatabase](../DBMeta/CreateSQLiteDatabase.md)
 > - [Query Examples](../Database/QueryExamples.md)
 > - [DBConnections](../Database/DBConnections.md)
 > - [DBMeta](../../REFERENCE.md#modudevcoreelysiumdbdbmeta)

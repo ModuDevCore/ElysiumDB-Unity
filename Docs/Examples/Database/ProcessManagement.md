@@ -117,3 +117,18 @@ private void OnStageChanged(ElysiumStage stage, object context)
     }
 }
 ```
+
+---
+
+> **See also**
+>
+> - [Creating and Using Extensions](../Extensions/CreateAndUseExtensions.md)
+> - [AfterExtensionAttribute](../Extensions/AfterExtensionAttribute.md)
+> - [RequireExtensionAttribute](../Extensions/RequireExtensionAttribute.md)
+> - [ExtensionProcessOrderAttribute](../Extensions/ExtensionProcessOrderAttribute.md)
+> - [DefaultExtensionGroupAttribute](../Extensions/DefaultExtensionGroupAttribute.md)
+> - [CreateElysiumDatabase](../CreateElysiumDatabase.md)
+> - [ElysiumDatabase](../../REFERENCE.md#modudevcoreelysiumdbelysiumdatabase)
+> - [DBExtensionBase](../../REFERENCE.md#modudevcoreelysiumdbextensiondbextensionbase)
+> - [ElysiumStage](../../REFERENCE.md#modudevcoreelysiumdbelysiumstage)
+> - [ExtensionEvent](../../REFERENCE.md#modudevcoreelysiumdbextensionevent)

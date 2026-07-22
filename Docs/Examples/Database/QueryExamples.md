@@ -109,5 +109,5 @@ List<Player> players =
 
 - [Execute](../DBMeta/Execute.md)
 - [DBConnections](./DBConnections.md)
-- [CreateSQLiteDatabase](./CreateSQLiteDatabase.md)
+- [CreateSQLiteDatabase](../DBMeta/CreateSQLiteDatabase.md)
 - [DBMeta](../../REFERENCE.md#modudevcoreelysiumdbdbmeta)

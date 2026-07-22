@@ -115,7 +115,7 @@ Once initialization is complete, you can:
 > **See also**
 >
 > - [DBConnections](./Database/DBConnections.md)
-> - [CreateSQLiteDatabase](./Database/CreateSQLiteDatabase.md)
+> - [CreateSQLiteDatabase](./DBMeta/CreateSQLiteDatabase.md)
 > - [Query Examples](./Database/QueryExamples.md)
 > - [Process Management](./Database/ProcessManagement.md)
 > - [Create and Use Extensions](./Extensions/CreateAndUseExtensions.md)

@@ -50,9 +50,9 @@ Debug.Log(ElysiumDatabase.Instance["Players.db"]);
 
 > **See also**
 >
-> - [Creating and Using Extensions](./CreateAndUseExtensions.md)
-> - [AfterExtensionAttribute](./AfterExtensionAttribute.md)
-> - [ExtensionProcessOrderAttribute](./ExtensionProcessOrderAttribute.md)
+> - [Creating and Using Extensions](../Extensions/CreateAndUseExtensions.md)
+> - [AfterExtensionAttribute](../Extensions/AfterExtensionAttribute.md)
+> - [ExtensionProcessOrderAttribute](../Extensions/ExtensionProcessOrderAttribute.md)
 > - [ElysiumDatabase.Suspend](../../REFERENCE.md#suspend)
 > - [ElysiumDatabase.Resume](../../REFERENCE.md#resume)
 > - [ElysiumDatabase.OnStageChanged](../../REFERENCE.md#onstagechanged)

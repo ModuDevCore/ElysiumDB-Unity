@@ -128,5 +128,5 @@ Instead of manually remembering to add both extensions, the dependency is declar
 > - [AfterExtensionAttribute](./AfterExtensionAttribute.md)
 > - [ExtensionProcessOrderAttribute](./ExtensionProcessOrderAttribute.md)
 > - [DefaultExtensionGroupAttribute](./DefaultExtensionGroupAttribute.md)
-> - [Process Management](./ProcessManagement.md)
+> - [Process Management](../Database/ProcessManagement.md)
 > - [RequireExtensionAttribute](../../REFERENCE.md#modudevcoreelysiumdbattributesrequireextensionattribute)

@@ -204,7 +204,7 @@ public class ExampleDelete : MonoBehaviour
 
 > **See also**
 >
-> - [DBConnections](./Examples/Database/DBConnections.md)
+> - [DBConnections](./Examples/DBMeta/DBConnections.md)
 > - [CreateSQLiteDatabase](./Examples/Database/CreateSQLiteDatabase.md)
 > - [Query Examples](./Examples/Database/QueryExamples.md)
 > - [Execute](./Examples/DBMeta/Execute.md)
