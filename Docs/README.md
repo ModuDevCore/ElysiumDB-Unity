@@ -33,6 +33,22 @@ It provides a unified centralized API for working with databases, extensions, an
 | [Issues](https://github.com/ModuDevCore/ElysiumDB-Unity/issues)          | Report bugs or issues                                |
 | [Pull Requests](https://github.com/ModuDevCore/ElysiumDB-Unity/pulls)    | Contribute to the project                            |
 
+### 📂 Database Examples
+
+- [Managing Multiple Databases](./Examples/Database/DBConnections.md)
+- [Executing SQL Commands](./Examples/Database/Execute.md)
+- [Query Examples](./Examples/Database/QueryExamples.md)
+- [Process management](./Examples/Database/ProcessManagement.md)
+- [CreateElysiumDatabase](./Examples/CreateElysiumDatabase.md)
+
+### 🧩 Extension Examples
+
+- [Creating and Using Extensions](./Examples/Extensions/CreateAndUseExtensions.md)
+- [RequireExtensionAttribute](./Examples/Extensions/RequireExtensionAttribute.md)
+- [ExtensionProcessOrderAttribute](./Examples/Extensions/ExtensionProcessOrderAttribute.md)
+- [DefaultExtensionGroupAttribute](./Examples/Extensions/DefaultExtensionGroupAttribute.md)
+- [AfterExtensionAttribute](./Examples/Extensions/AfterExtensionAttribute.md)
+
 ---
 
 ## ✨ Features
@@ -81,28 +97,33 @@ Detailed usage description, recommended for viewing.
 ```csharp
 using ModuDevCore.ElysiumDB;
 using UnityEngine;
+using System.Collections.Generic;
+
+public class Player
+{
+    public string Name;
+    public int Money;
+    public int Score;
+}
 
 public class ExampleUsage : MonoBehaviour
 {
-    private async void Start()
+    private void Start()
     {
         var elysiumDB = new ElysiumDatabase();
-        elysiumDB.New(); // Initialization of databases and extensions, now you can get an instance through ElysiumDatabase.Instance.
+        elysiumDB.New();
 
-        DBMeta connection = elysiumDB["main"]; // Or elysiumDB.Connections["main"]
-        var reader = connection.Query("SELECT * FROM Players"); // 
+        List<Player> players = elysiumDB["main"].QueryList<Player>(
+            "SELECT Name, Money, Score FROM Player"
+        );
 
-        while (reader.Read())
+        foreach (Player player in players)
         {
-            Debug.Log(reader[0]);
+            Debug.Log($"{player.Name} | Money: {player.Money} | Score: {player.Score}");
         }
-      
-        reader.Dispose();
     }
 }
 ```
-
-See also: [DBMeta](#), [ElysiumDatabase](#)
 
 ---
 

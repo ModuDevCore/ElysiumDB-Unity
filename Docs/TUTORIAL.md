@@ -277,7 +277,7 @@ At the end, you should see two modules in the Extensions list.
 > **See also**
 >
 > - [Create And Use Extensions](./Examples/Extensions/CreateAndUseExtensions.md)
-> - [ProcessManagement](./Examples/Extensions/ProcessManagement.md)
+> - [ProcessManagement](./Examples/Database/ProcessManagement.md)
 > - [AfterExtensionAttribute](./Examples/Extensions/AfterExtensionAttribute.md)
 > - [ExtensionProcessOrderAttribute](./Examples/Extensions/ExtensionProcessOrderAttribute.md)
 > - [RequireExtensionAttribute](./Examples/Extensions/RequireExtensionAttribute.md)
@@ -298,6 +298,7 @@ Continue exploring the library through practical examples or dive into the compl
 - [Executing SQL Commands](./Examples/Database/Execute.md)
 - [Query Examples](./Examples/Database/QueryExamples.md)
 - [Process management](./Examples/Database/ProcessManagement.md)
+- [CreateElysiumDatabase](./Examples/CreateElysiumDatabase.md)
 
 ### 🧩 Extension Examples
 
