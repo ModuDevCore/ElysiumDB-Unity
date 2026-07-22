@@ -15,11 +15,10 @@ It provides a unified centralized API for working with databases, extensions, an
 
 <p align="center">
   <a href="TUTORIAL.md"><img src="./Images/Tutorial.png" alt="Tutorial.md" hspace="10"></a>
-
-  <a href="REFERENCE.md"><img src="./Images/Reference.png" alt="Reference.md" hspace="10"></a>
 </p>
 <p align="center">
   <a href="changelog.md"><img src="./Images/ChangeLog.png" alt="ChangeLog.md" hspace="10"></a>
+  <a href="REFERENCE.md"><img src="./Images/Reference.png" alt="Reference.md" hspace="10"></a>
 </p>
 
 ## 📌 Useful Links
