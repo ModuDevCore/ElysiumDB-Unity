@@ -14,11 +14,11 @@
 It provides a unified centralized API for working with databases, extensions, and connections, making it easier to build scalable data storage systems in Unity projects. Start developing, see [TUTORIAL.md](TUTORIAL.md) 
 
 <p align="center">
-  <a href="TUTORIAL.md"><img src="./Images/Tutorial.png" alt="Tutorial.md" hspace="10"></a>
+  <a href="TUTORIAL.md"><img src="./Images/Tutorial.png" alt="Tutorial.md" hspace="10" width="30%"></a>
 </p>
 <p align="center">
-  <a href="changelog.md"><img src="./Images/ChangeLog.png" alt="ChangeLog.md" hspace="10"></a>
-  <a href="REFERENCE.md"><img src="./Images/Reference.png" alt="Reference.md" hspace="10"></a>
+  <a href="changelog.md"><img src="./Images/ChangeLog.png" alt="ChangeLog.md" hspace="10" width="25%"></a>
+  <a href="REFERENCE.md"><img src="./Images/Reference.png" alt="Reference.md" hspace="10" width="25%"></a>
 </p>
 
 ## 📌 Useful Links

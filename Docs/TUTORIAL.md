@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/ModuDevCore/about/main/Images/Baner.gif" width="800" alt="Organization" />
+  <img src="./Images/ElysiumDBv120.png" width="800" alt="Organization" />
 </p>
 
 Practical step-by-step guide for working with the library.
@@ -124,7 +124,6 @@ public class ExampleInsert : MonoBehaviour
     {
         ElysiumDatabase.Instance["Players.db"].Execute(
             "INSERT INTO Player(Name, Level) VALUES(@name, @level)",
-            ("name", "Alex"),
             parameters: new (string name, object value)[]
             {
                 ("@level", 1)
@@ -204,8 +203,8 @@ public class ExampleDelete : MonoBehaviour
 
 > **See also**
 >
-> - [DBConnections](./Examples/DBMeta/DBConnections.md)
-> - [CreateSQLiteDatabase](./Examples/Database/CreateSQLiteDatabase.md)
+> - [DBConnections](./Examples/Database/DBConnections.md)
+> - [CreateSQLiteDatabase](./Examples/DBMeta/CreateSQLiteDatabase.md)
 > - [Query Examples](./Examples/Database/QueryExamples.md)
 > - [Execute](./Examples/DBMeta/Execute.md)
 
@@ -295,7 +294,7 @@ Continue exploring the library through practical examples or dive into the compl
 ### 📂 Database Examples
 
 - [Managing Multiple Databases](./Examples/Database/DBConnections.md)
-- [Executing SQL Commands](./Examples/Database/Execute.md)
+- [Executing SQL Commands](./Examples/DBMeta/Execute.md)
 - [Query Examples](./Examples/Database/QueryExamples.md)
 - [Process management](./Examples/Database/ProcessManagement.md)
 - [CreateElysiumDatabase](./Examples/CreateElysiumDatabase.md)
